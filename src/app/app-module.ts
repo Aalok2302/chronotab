@@ -2,13 +2,17 @@ import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms'; // Import FormsModule
 import { App } from './app';
-import { BookmarkListComponent } from './components/bookmark-list-component/bookmark-list-component';
+import { BookmarkList } from './components/bookmark-list/bookmark-list';
 import { BookmarkService } from './services/bookmark-service';
+import { BookmarkSearchBar } from './components/bookmark-search-bar/bookmark-search-bar';
+import { BookmarkItem } from './components/bookmark-item/bookmark-item';
 
 @NgModule({
   declarations: [
     App,
-    BookmarkListComponent,
+    BookmarkList,
+    BookmarkSearchBar,
+    BookmarkItem,
   ],
   imports: [
     BrowserModule,

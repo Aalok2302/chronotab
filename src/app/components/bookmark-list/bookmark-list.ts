@@ -4,14 +4,14 @@ import { takeUntil, switchMap, map, startWith, debounceTime, distinctUntilChange
 import { Bookmark, BookmarkService } from '../../services/bookmark-service';
 
 @Component({
-  selector: 'app-bookmark-list-component',
+  selector: 'bookmark-list',
   standalone: false,
-  templateUrl: './bookmark-list-component.html',
-  styleUrl: './bookmark-list-component.css'
+  templateUrl: './bookmark-list.html',
+  styleUrl: './bookmark-list.css'
 })
-export class BookmarkListComponent implements OnDestroy {
+export class BookmarkList implements OnDestroy {
   bookmarkTree: Bookmark[] = [];
-  searchQuery: string = '';
+  query: string = '';
   loading: boolean = true;
   error: string | null = null;
   
@@ -35,6 +35,11 @@ export class BookmarkListComponent implements OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  public onSearchQueryChange(newQuery:string){
+    this.query = newQuery;
+    this.onSearch()
   }
 
   private initializeSubscriptions() {
@@ -102,11 +107,11 @@ export class BookmarkListComponent implements OnDestroy {
 
   // Get filtered bookmarks based on search
   getFilteredBookmarks(): Bookmark[] {
-    if (!this.searchQuery.trim()) {
+    if (!this.query.trim()) {
       return this.bookmarkTree;
     }
     
-    return this.filterBookmarksRecursively(this.bookmarkTree, this.searchQuery.toLowerCase());
+    return this.filterBookmarksRecursively(this.bookmarkTree, this.query.toLowerCase());
   }
 
   private filterBookmarksRecursively(bookmarks: Bookmark[], query: string): Bookmark[] {
@@ -135,7 +140,7 @@ export class BookmarkListComponent implements OnDestroy {
   }
 
   onSearch() {
-    this.searchQuery$.next(this.searchQuery);
+    this.searchQuery$.next(this.query);
   }
 
   private performSearch(query: string) {
