@@ -1,0 +1,68 @@
+<div class="theme-switcher-container relative">
+  <!-- Theme Toggle Button -->
+  <button
+    (click)="toggleDropdown()"
+    class="theme-switcher-button flex items-center gap-2 px-3 py-2 rounded-lg bg-background-secondary hover:bg-background-tertiary text-text-primary border border-border-primary transition-all duration-200 hover:shadow-theme"
+    [attr.aria-expanded]="isOpen"
+    aria-label="Select theme"
+  >
+    <span class="text-lg" *ngIf="currentTheme">{{ getThemeIcon(currentTheme.name) }}</span>
+    <span class="text-sm font-medium" *ngIf="currentTheme">{{ currentTheme.displayName }}</span>
+    <svg
+      class="w-4 h-4 transition-transform duration-200"
+      [class.rotate-180]="isOpen"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+    </svg>
+  </button>
+
+  <!-- Theme Dropdown Menu -->
+  <div
+    *ngIf="isOpen"
+    class="theme-dropdown absolute right-0 mt-2 w-48 rounded-lg bg-background-elevated border border-border-primary shadow-theme-lg z-50 overflow-hidden animate-fade-in"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="py-1">
+      <button
+        *ngFor="let theme of themes"
+        (click)="selectTheme(theme)"
+        class="theme-option w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-background-secondary transition-colors duration-150"
+        [class.bg-background-tertiary]="currentTheme.name === theme.name"
+      >
+        <span class="text-lg">{{ getThemeIcon(theme.name) }}</span>
+        <span class="text-sm text-text-primary">{{ theme.displayName }}</span>
+        <svg
+          *ngIf="currentTheme.name === theme.name"
+          class="w-4 h-4 ml-auto text-primary"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick Toggle Button (Alternative compact version) -->
+  <button
+    (click)="toggleTheme()"
+    class="theme-toggle-compact ml-2 p-2 rounded-full bg-background-secondary hover:bg-background-tertiary text-text-primary border border-border-primary transition-all duration-200 hover:shadow-theme"
+    aria-label="Quick toggle theme"
+  >
+    <span class="text-lg" *ngIf="currentTheme">{{ getThemeIcon(currentTheme.name) }}</span>
+  </button>
+</div>
+
+<!-- Click outside to close -->
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 z-40"
+  (click)="isOpen = false"
+></div>

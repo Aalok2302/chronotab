@@ -1,2 +1,233 @@
-/* You can add global styles to this file, and also import other style files */
+/* Tailwind CSS imports */
 @import "tailwindcss";
+
+/* Default theme variables (Light theme) */
+:root {
+  /* Primary colors */
+  --color-primary: #1a73e8;
+  --color-primary-hover: #1765cc;
+  --color-primary-active: #1557b0;
+  
+  /* Secondary colors */
+  --color-secondary: #5f6368;
+  --color-secondary-hover: #4a4e52;
+  --color-secondary-active: #3c4043;
+  
+  /* Accent colors */
+  --color-accent: #ea4335;
+  --color-accent-hover: #d33b2c;
+  --color-accent-active: #b52d1f;
+  
+  /* Background colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8f9fa;
+  --color-bg-tertiary: #f1f3f4;
+  --color-bg-elevated: #ffffff;
+  
+  /* Text colors */
+  --color-text-primary: #202124;
+  --color-text-secondary: #5f6368;
+  --color-text-tertiary: #80868b;
+  --color-text-inverse: #ffffff;
+  
+  /* Border colors */
+  --color-border-primary: #dadce0;
+  --color-border-secondary: #e8eaed;
+  --color-border-focus: #1a73e8;
+  
+  /* Status colors */
+  --color-success: #34a853;
+  --color-warning: #fbbc04;
+  --color-error: #ea4335;
+  --color-info: #4285f4;
+  
+  /* Shadow colors */
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-shadow-hover: rgba(0, 0, 0, 0.2);
+}
+
+/* Global styles */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme transition animations */
+.theme-light,
+.theme-dark,
+.theme-blue,
+.theme-purple,
+.theme-green {
+  animation: themeTransition 0.3s ease-in-out;
+}
+
+@keyframes themeTransition {
+  0% {
+    opacity: 0.95;
+  }
+  50% {
+    opacity: 0.98;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-secondary);
+}
+
+/* Selection styling */
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+::-moz-selection {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+/* Focus styles */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* Button base styles */
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Link styles */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+a:active {
+  color: var(--color-primary-active);
+}
+
+/* Input styles */
+input,
+textarea,
+select {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-primary);
+  transition: all 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-border-focus);
+  background-color: var(--color-bg-secondary);
+}
+
+/* Utility classes for theme colors */
+.theme-bg-primary { background-color: var(--color-bg-primary); }
+.theme-bg-secondary { background-color: var(--color-bg-secondary); }
+.theme-bg-tertiary { background-color: var(--color-bg-tertiary); }
+.theme-bg-elevated { background-color: var(--color-bg-elevated); }
+
+.theme-text-primary { color: var(--color-text-primary); }
+.theme-text-secondary { color: var(--color-text-secondary); }
+.theme-text-tertiary { color: var(--color-text-tertiary); }
+.theme-text-inverse { color: var(--color-text-inverse); }
+
+.theme-border-primary { border-color: var(--color-border-primary); }
+.theme-border-secondary { border-color: var(--color-border-secondary); }
+.theme-border-focus { border-color: var(--color-border-focus); }
+
+/* Theme-aware shadow utilities */
+.theme-shadow {
+  box-shadow: 0 1px 3px 0 var(--color-shadow);
+}
+
+.theme-shadow-md {
+  box-shadow: 0 4px 6px -1px var(--color-shadow);
+}
+
+.theme-shadow-lg {
+  box-shadow: 0 10px 15px -3px var(--color-shadow);
+}
+
+.theme-shadow-xl {
+  box-shadow: 0 20px 25px -5px var(--color-shadow);
+}
+
+.theme-shadow-hover:hover {
+  box-shadow: 0 4px 8px 0 var(--color-shadow-hover);
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Responsive utilities */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
