@@ -1,15 +1,15 @@
-<div class="theme-switcher-container relative">
+<div class="relative inline-block">
   <!-- Theme Toggle Button -->
   <button
     (click)="toggleDropdown()"
-    class="theme-switcher-button flex items-center gap-2 px-3 py-2 rounded-lg bg-background-secondary hover:bg-background-tertiary text-text-primary border border-border-primary transition-all duration-200 hover:shadow-theme"
+    class="min-w-[140px] sm:min-w-[140px] flex items-center gap-2 px-3 py-2 rounded-lg bg-background-secondary hover:bg-background-tertiary text-text-primary border border-border-primary transition-all duration-200 hover:shadow-theme hover:-translate-y-px active:translate-y-0"
     [attr.aria-expanded]="isOpen"
     aria-label="Select theme"
   >
     <span class="text-lg" *ngIf="currentTheme">{{ getThemeIcon(currentTheme.name) }}</span>
-    <span class="text-sm font-medium" *ngIf="currentTheme">{{ currentTheme.displayName }}</span>
+    <span class="text-sm font-medium hidden sm:inline" *ngIf="currentTheme">{{ currentTheme.displayName }}</span>
     <svg
-      class="w-4 h-4 transition-transform duration-200"
+      class="w-4 h-4 transition-transform duration-200 ml-auto"
       [class.rotate-180]="isOpen"
       fill="none"
       stroke="currentColor"
@@ -22,15 +22,16 @@
   <!-- Theme Dropdown Menu -->
   <div
     *ngIf="isOpen"
-    class="theme-dropdown absolute right-0 mt-2 w-48 rounded-lg bg-background-elevated border border-border-primary shadow-theme-lg z-50 overflow-hidden animate-fade-in"
+    class="absolute right-0 sm:right-0 left-0 sm:left-auto mt-2 w-48 rounded-lg bg-background-elevated border border-border-primary shadow-theme-lg z-50 overflow-hidden opacity-0 animate-[fadeIn_0.2s_ease-out_forwards]"
     (click)="$event.stopPropagation()"
   >
     <div class="py-1">
       <button
         *ngFor="let theme of themes"
         (click)="selectTheme(theme)"
-        class="theme-option w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-background-secondary transition-colors duration-150"
+        class="relative w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-background-secondary transition-colors duration-150 before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[3px] before:bg-transparent hover:before:bg-primary before:transition-colors"
         [class.bg-background-tertiary]="currentTheme.name === theme.name"
+        [class.before:!bg-primary]="currentTheme.name === theme.name"
       >
         <span class="text-lg">{{ getThemeIcon(theme.name) }}</span>
         <span class="text-sm text-text-primary">{{ theme.displayName }}</span>
@@ -51,13 +52,13 @@
   </div>
 
   <!-- Quick Toggle Button (Alternative compact version) -->
-  <button
+  <!-- <button
     (click)="toggleTheme()"
-    class="theme-toggle-compact ml-2 p-2 rounded-full bg-background-secondary hover:bg-background-tertiary text-text-primary border border-border-primary transition-all duration-200 hover:shadow-theme"
+    class="inline-flex items-center justify-center w-9 h-9 ml-2 p-2 rounded-full bg-background-secondary hover:bg-background-tertiary text-text-primary border border-border-primary transition-all duration-200 hover:shadow-theme hover:-translate-y-px active:translate-y-0"
     aria-label="Quick toggle theme"
   >
     <span class="text-lg" *ngIf="currentTheme">{{ getThemeIcon(currentTheme.name) }}</span>
-  </button>
+  </button> -->
 </div>
 
 <!-- Click outside to close -->

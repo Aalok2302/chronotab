@@ -74,6 +74,7 @@ module.exports = {
       },
       animation: {
         'theme-pulse': 'theme-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'fadeIn': 'fadeIn 0.2s ease-out forwards',
       },
       keyframes: {
         'theme-pulse': {
@@ -82,6 +83,16 @@ module.exports = {
           },
           '50%': {
             opacity: '.5',
+          },
+        },
+        'fadeIn': {
+          'from': {
+            opacity: '0',
+            transform: 'translateY(-10px)',
+          },
+          'to': {
+            opacity: '1',
+            transform: 'translateY(0)',
           },
         },
       },

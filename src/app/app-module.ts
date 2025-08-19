@@ -17,7 +17,7 @@ import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
     BookmarkSearchBar,
     BookmarkItem,
     Layout,
-    ThemeSwitcher,
+    ThemeSwitcher
   ],
   imports: [
     BrowserModule,
