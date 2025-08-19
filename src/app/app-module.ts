@@ -6,6 +6,7 @@ import { BookmarkList } from './components/bookmark-list/bookmark-list';
 import { BookmarkService } from './services/bookmark-service';
 import { BookmarkSearchBar } from './components/bookmark-search-bar/bookmark-search-bar';
 import { BookmarkItem } from './components/bookmark-item/bookmark-item';
+import { Layout } from './components/layout/layout';
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import { BookmarkItem } from './components/bookmark-item/bookmark-item';
     BookmarkList,
     BookmarkSearchBar,
     BookmarkItem,
+    Layout,
   ],
   imports: [
     BrowserModule,

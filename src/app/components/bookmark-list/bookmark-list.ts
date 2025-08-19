@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { Subject, combineLatest, of } from 'rxjs';
-import { takeUntil, switchMap, map, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Bookmark, BookmarkService } from '../../services/bookmark-service';
 
 @Component({
@@ -37,9 +37,9 @@ export class BookmarkList implements OnDestroy {
     this.destroy$.complete();
   }
 
-  public onSearchQueryChange(newQuery:string){
+  public onSearchQueryChange(newQuery: string) {
     this.query = newQuery;
-    this.onSearch()
+    this.onSearch();
   }
 
   private initializeSubscriptions() {
@@ -148,20 +148,17 @@ export class BookmarkList implements OnDestroy {
     // No additional logic needed here as the template will reactively update
   }
 
-  openBookmark(url?: string) {
-    if (url) {
-      // In development mode or when Chrome APIs aren't available, use window.open
-      if (chrome?.tabs) {
-        chrome.tabs.create({ url: url });
-      } else {
-        window.open(url, '_blank');
-      }
+  openBookmark(url: string) {
+    // In development mode or when Chrome APIs aren't available, use window.open
+    if (chrome?.tabs) {
+      chrome.tabs.create({ url: url });
+    } else {
+      window.open(url, '_blank');
     }
   }
 
-  removeBookmark(bookmark: Bookmark, event: Event) {
-    event.stopPropagation();
-    
+  removeBookmark(data: {bookmark: Bookmark, event: Event}) {
+    const { bookmark } = data;
     const itemType = bookmark.url ? 'bookmark' : 'folder';
     if (confirm(`Remove ${itemType} "${bookmark.title}"?`)) {
       this.bookmarkService.removeBookmark(bookmark.id)
@@ -176,21 +173,5 @@ export class BookmarkList implements OnDestroy {
           }
         });
     }
-  }
-
-  getFaviconUrl(url?: string): string {
-    if (!url) return '';
-    try {
-      const domain = new URL(url).origin;
-      return `${domain}/favicon.ico`;
-    } catch {
-      return '';
-    }
-  }
-
-  formatDate(timestamp?: number): string {
-    if (!timestamp) return '';
-    const date = new Date(timestamp);
-    return date.toLocaleDateString();
   }
 }

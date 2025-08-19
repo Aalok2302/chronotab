@@ -1,1 +1,92 @@
-<p>bookmark-item works!</p>
+<!-- Folder Item -->
+<div *ngIf="isFolder" class="border-b border-gray-100 last:border-b-0">
+  <div
+    class="group flex items-center py-2 px-3 hover:bg-gray-50 cursor-pointer transition-colors duration-200"
+    [style.padding-left.px]="paddingLeft"
+    (click)="onToggleFolder()">
+    
+    <!-- Collapse/Expand Button -->
+    <button class="flex-shrink-0 mr-2 p-1 rounded hover:bg-gray-200 transition-colors duration-200">
+      <svg 
+        class="w-4 h-4 text-gray-500 transition-transform duration-200"
+        [class.rotate-90]="!isCollapsed"
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+
+    <!-- Folder Icon -->
+    <div class="flex-shrink-0 mr-2">
+      <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+      </svg>
+    </div>
+
+    <!-- Folder Title -->
+    <div class="flex-1 min-w-0">
+      <h3 class="text-sm font-medium text-gray-900 truncate">{{ bookmark.title }}</h3>
+      <p class="text-xs text-gray-500" *ngIf="bookmark.children">
+        {{ itemCount }} item{{ itemCount !== 1 ? 's' : '' }}
+      </p>
+    </div>
+
+    <!-- Remove Button -->
+    <button
+      *ngIf="canRemove"
+      (click)="onRemoveBookmark($event)"
+      class="flex-shrink-0 ml-2 p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200 opacity-0 group-hover:opacity-100">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Folder Children (shown when not collapsed) -->
+  <div *ngIf="bookmark.children && !isCollapsed" class="bg-gray-25">
+    <ng-content></ng-content>
+  </div>
+</div>
+
+<!-- Bookmark Item -->
+<div *ngIf="!isFolder"
+     class="border-b border-gray-100 last:border-b-0 group hover:bg-gray-50 transition-colors duration-200">
+  <div
+    class="flex items-center py-1.5 px-3 cursor-pointer"
+    [style.padding-left.px]="paddingLeft"
+    (click)="onOpenBookmark()">
+    
+    <!-- Spacer for alignment with folder items -->
+    <div class="w-5 mr-2"></div>
+
+    <!-- Favicon -->
+    <div class="flex-shrink-0 mr-2">
+      <img
+        [src]="getFaviconUrl()"
+        class="w-4 h-4 rounded"
+        [alt]="bookmark.title"
+        onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjOTMzNkZCIi8+Cjwvc3ZnPgo='">
+    </div>
+
+    <!-- Bookmark Details -->
+    <div class="flex-1 min-w-0">
+      <p class="text-sm text-gray-900 truncate">{{ bookmark.title }}</p>
+      <p class="text-xs text-gray-500 truncate">{{ bookmark.url }}</p>
+    </div>
+
+    <!-- Date and Remove Button -->
+    <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      <span *ngIf="bookmark.dateAdded" class="text-xs text-gray-400">
+        {{ formatDate(bookmark.dateAdded) }}
+      </span>
+      <button 
+        (click)="onRemoveBookmark($event)"
+        class="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
