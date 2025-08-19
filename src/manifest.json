@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Chrono Tab",
+  "version": "1.0",
+  "description": "Display and manage Chrome bookmarks",
+  
+  "permissions": [
+    "bookmarks",
+    "storage",
+    "tabs"
+  ],
+  
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Bookmark Manager"
+  },
+  
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline';"
+  },
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*", "*.js", "*.css", "*.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+B",
+        "mac": "Command+Shift+B"
+      },
+      "description": "Open bookmark manager"
+    }
+  }
+}
