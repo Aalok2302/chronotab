@@ -1,6 +1,8 @@
 <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-
+    <bookmark-search-bar 
+      [(searchQuery)]="searchQuery" 
+      (searchQueryChange)="onSearchQueryChange($event)">
+    </bookmark-search-bar>
     
-
-
+    <bookmark-list #bookmarkList></bookmark-list>
 </div>
