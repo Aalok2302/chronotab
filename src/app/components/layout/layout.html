@@ -16,11 +16,20 @@
     
     <!-- Main Content -->
     <main class="pb-8">
-        <bookmark-search-bar
-          [(searchQuery)]="searchQuery"
-          (searchQueryChange)="onSearchQueryChange($event)">
-        </bookmark-search-bar>
+        <div class="w-full">
+            <bookmark-search-bar
+              [(searchQuery)]="searchQuery"
+              (searchQueryChange)="onSearchQueryChange($event)">
+            </bookmark-search-bar>
+        </div>
+        <div class="max-w-7xl mx-auto flex justify-center">
+            <div class="w-1/2">
+                <bookmark-list #bookmarkList></bookmark-list>
+            </div>
+            <div class="w-1/2">
+                <app-weather-card></app-weather-card>
+            </div>
+        </div>
         
-        <bookmark-list #bookmarkList></bookmark-list>
     </main>
 </div>

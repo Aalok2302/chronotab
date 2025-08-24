@@ -9,6 +9,7 @@ import { BookmarkSearchBar } from './components/bookmark-search-bar/bookmark-sea
 import { BookmarkItem } from './components/bookmark-item/bookmark-item';
 import { Layout } from './components/layout/layout';
 import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
+import { WeatherCard } from './components/weather-card/weather-card';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
     BookmarkSearchBar,
     BookmarkItem,
     Layout,
-    ThemeSwitcher
+    ThemeSwitcher,
+    WeatherCard
   ],
   imports: [
     BrowserModule,
