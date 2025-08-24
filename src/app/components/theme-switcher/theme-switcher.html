@@ -2,7 +2,7 @@
   <!-- Theme Toggle Button -->
   <button
     (click)="toggleDropdown()"
-    class="min-w-[140px] sm:min-w-[140px] flex items-center gap-2 px-3 py-2 rounded-lg bg-background-secondary hover:bg-background-tertiary text-text-primary border border-border-primary transition-all duration-200 hover:shadow-theme hover:-translate-y-px active:translate-y-0"
+    class="min-w-[140px] sm:min-w-[140px] flex items-center gap-2 px-3 py-2 rounded-lg theme-bg-secondary hover:theme-bg-tertiary text-text-primary border border-border-primary transition-all duration-200 hover:theme-shadow hover:-translate-y-px active:translate-y-0"
     [attr.aria-expanded]="isOpen"
     aria-label="Select theme"
   >
@@ -22,7 +22,7 @@
   <!-- Theme Dropdown Menu -->
   <div
     *ngIf="isOpen"
-    class="absolute right-0 sm:right-0 left-0 sm:left-auto mt-2 w-48 rounded-lg bg-background-elevated border border-border-primary shadow-theme-lg z-50 overflow-hidden opacity-0 animate-[fadeIn_0.2s_ease-out_forwards]"
+    class="absolute right-0 sm:right-0 left-0 sm:left-auto mt-2 w-48 rounded-lg theme-bg-elevated border border-border-primary theme-shadow-lg z-50 overflow-hidden opacity-0 animate-[fadeIn_0.2s_ease-out_forwards]"
     (click)="$event.stopPropagation()"
   >
     <div class="py-1">
@@ -30,7 +30,7 @@
         *ngFor="let theme of themes"
         (click)="selectTheme(theme)"
         class="relative w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-background-secondary transition-colors duration-150 before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[3px] before:bg-transparent hover:before:bg-primary before:transition-colors"
-        [class.bg-background-tertiary]="currentTheme.name === theme.name"
+        [class.theme-bg-tertiary]="currentTheme.name === theme.name"
         [class.before:!bg-primary]="currentTheme.name === theme.name"
       >
         <span class="text-lg">{{ getThemeIcon(theme.name) }}</span>
