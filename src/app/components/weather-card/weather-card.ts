@@ -15,7 +15,7 @@ export class WeatherCard implements OnInit {
   apiKey: string = '';
   showOptions: boolean = false; // Control visibility of options popover
 
-  constructor(private weatherService: WeatherService) { }
+  constructor(public weatherService: WeatherService) { }
 
   ngOnInit() {
     // Load city and API key from local storage if available
@@ -75,8 +75,4 @@ export class WeatherCard implements OnInit {
     });
   }
 
-  getWeatherIconPath(weatherCode: number): string {
-    // Map weatherCode to local asset path with the format ${CODE}.png (low resolution)
-    return `assets/weather/${weatherCode}.png`;
-  }
 }

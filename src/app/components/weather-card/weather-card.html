@@ -32,15 +32,17 @@
       {{ error }}
     </div>
 
-    <div *ngIf="weatherData" class="bg-gradient-to-br from-blue-400 to-blue-600 text-white p-6 rounded-lg shadow-xl min-w-100">
+    <div *ngIf="weatherData" [class]="weatherService.getWeatherGradientClass(weatherData.data.values.weatherCode)" class="p-6 rounded-lg shadow-xl min-w-100">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-3xl font-bold">{{ city }}</h2>
-        <span class="text-lg">{{ weatherData.data.time | date:'shortTime' }}</span>
+        <h2 class="text-3xl font-bold">{{ city | titlecase }}</h2>
+        <span class="text-lg"><span class="text-sm text-secondary">Last updated on -</span> {{ weatherData.data.time | date:'shortTime' }}</span>
       </div>
+
+      <p class="text-xl mb-4">{{ weatherService.getWeatherDescription(weatherData.data.values.weatherCode) }}</p>
 
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center">
-          <img [src]="getWeatherIconPath(weatherData.data.values.weatherCode)" alt="Weather Icon" class="w-16 h-16 mr-4">
+          <img [src]="weatherService.getWeatherIconPath(weatherData.data.values.weatherCode)" alt="Weather Icon" class="w-16 h-16 mr-4">
           <div>
             <p class="text-5xl font-extrabold">{{ weatherData.data.values.temperature | number:'1.0-0' }}°C</p>
             <p class="text-lg">Feels like {{ weatherData.data.values.temperatureApparent | number:'1.0-0' }}°C</p>
