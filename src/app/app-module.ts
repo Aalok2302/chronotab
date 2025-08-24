@@ -1,6 +1,7 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // Import FormsModule and ReactiveFormsModule
+import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
 import { App } from './app';
 import { BookmarkList } from './components/bookmark-list/bookmark-list';
 import { BookmarkService } from './services/bookmark-service';
@@ -10,6 +11,7 @@ import { BookmarkItem } from './components/bookmark-item/bookmark-item';
 import { Layout } from './components/layout/layout';
 import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
 import { WeatherCard } from './components/weather-card/weather-card';
+import { OptionsComponent } from './components/options/options.component'; // Import OptionsComponent
 
 @NgModule({
   declarations: [
@@ -19,11 +21,14 @@ import { WeatherCard } from './components/weather-card/weather-card';
     BookmarkItem,
     Layout,
     ThemeSwitcher,
-    WeatherCard
+    WeatherCard,
+    OptionsComponent // Declare OptionsComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule, // Add ReactiveFormsModule
+    HttpClientModule // Add HttpClientModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
