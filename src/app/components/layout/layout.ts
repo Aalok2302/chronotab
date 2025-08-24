@@ -14,6 +14,7 @@ export class Layout implements OnInit, AfterViewInit {
   searchQuery: string = '';
   showWallpaperOptions: boolean = false;
   currentWallpaperUrl: string | null = null;
+  currentWallpaper: any | null = null; // To store the full wallpaper object
   showBackground: boolean = true;
   isBackgroundVisible: boolean = false; // New property to control background visibility
 
@@ -42,9 +43,11 @@ export class Layout implements OnInit, AfterViewInit {
     const apiKey = localStorage.getItem('pexelsApiKey');
     const wallpaper = await this.wallpaperService.getRandomHDLandscape(topics || undefined, apiKey || undefined);
     if (wallpaper) {
-      this.currentWallpaperUrl = wallpaper.large2xHD;
+      this.currentWallpaper = wallpaper; // Store the entire wallpaper object
+      this.currentWallpaperUrl = wallpaper.originalHD;
       this.isBackgroundVisible = true;
     } else {
+      this.currentWallpaper = null; // Clear wallpaper object
       this.currentWallpaperUrl = null;
       this.isBackgroundVisible = false;
     }
@@ -53,9 +56,10 @@ export class Layout implements OnInit, AfterViewInit {
   onShowBackgroundChange(show: boolean): void {
     this.showBackground = show;
     this.isBackgroundVisible = show; // Update visibility based on toggle
-    if (this.showBackground) {
+    if (this.showBackground && this.currentWallpaperUrl === null) {
       this.fetchAndSetWallpaper();
     } else {
+      this.currentWallpaper = null; // Clear wallpaper object
       this.currentWallpaperUrl = null; // Clear background image
     }
   }

@@ -33,6 +33,7 @@ export class WallpaperOptionComponent implements OnInit {
     localStorage.setItem('pexelsApiKey', this.pexelsApiKey);
     localStorage.setItem('wallpaperTopics', this.topics);
     localStorage.setItem('showBackground', this.showBackground.toString());
+    this.showBackgroundChange.emit(this.showBackground);
   }
 
   onApiKeyChange(event: Event): void {
@@ -52,6 +53,8 @@ export class WallpaperOptionComponent implements OnInit {
   }
 
   onRefreshWallpaper(): void {
-    this.refreshWallpaper.emit();
+    if (this.showBackground) {
+      this.refreshWallpaper.emit();
+    }
   }
 }

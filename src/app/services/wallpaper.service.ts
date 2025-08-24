@@ -19,7 +19,7 @@ interface Wallpaper {
 })
 export class WallpaperService {
   private cache = new Map<string, { data: Wallpaper, timestamp: number }>();
-  private readonly CACHE_DURATION = 60 * 1000; // 1 minute in milliseconds
+  private readonly CACHE_DURATION = 2 * 60 * 1000; // 2 minute in milliseconds
 
   constructor() { }
 

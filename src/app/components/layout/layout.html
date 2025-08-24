@@ -54,4 +54,9 @@
           (refreshWallpaper)="fetchAndSetWallpaper()">
         </app-wallpaper-option>
     </div>
+
+    <!-- Photographer Name -->
+    <div *ngIf="currentWallpaper?.photographer" class="absolute bottom-4 left-4 text-white text-sm">
+        Photo by {{ currentWallpaper.photographer }}
+    </div>
 </div>
