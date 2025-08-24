@@ -1,4 +1,9 @@
-<div class="min-h-screen bg-background-primary">
+<div
+  class="min-h-screen bg-background-primary"
+  [style.background-image]="isBackgroundVisible && currentWallpaperUrl ? 'url(' + currentWallpaperUrl + ')' : 'none'"
+  [style.background-size]="isBackgroundVisible && currentWallpaperUrl ? 'cover' : 'auto'"
+  [style.background-position]="isBackgroundVisible && currentWallpaperUrl ? 'center' : 'initial'"
+>
     <!-- Header with theme switcher -->
     <header class="sticky top-0 z-40 bg-background-elevated border-b border-border-primary backdrop-blur-sm bg-opacity-95">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,4 +37,21 @@
         </div>
         
     </main>
+
+    <!-- Wallpaper Options Button -->
+    <div class="absolute bottom-4 right-4">
+        <button (click)="toggleWallpaperOptions()" class="p-2 rounded-full theme-bg-primary theme-text-primary theme-shadow-md hover:theme-bg-secondary focus:outline-none focus:ring-2 theme-border-focus">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 theme-text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Wallpaper Options Component -->
+    <div *ngIf="showWallpaperOptions" class="absolute bottom-16 right-4 z-50">
+        <app-wallpaper-option
+          (showBackgroundChange)="onShowBackgroundChange($event)"
+          (refreshWallpaper)="fetchAndSetWallpaper()">
+        </app-wallpaper-option>
+    </div>
 </div>

@@ -13,6 +13,7 @@ import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
 import { WeatherCard } from './components/weather-card/weather-card';
 import { OptionsComponent } from './components/options/options.component'; // Import OptionsComponent
 import { DigitalClockComponent } from './components/digital-clock/digital-clock.component';
+import { WallpaperOptionComponent } from './components/wallpaper-option/wallpaper-option.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { DigitalClockComponent } from './components/digital-clock/digital-clock.
     BrowserModule,
     FormsModule,
     ReactiveFormsModule, // Add ReactiveFormsModule
-    HttpClientModule // Add HttpClientModule
+    HttpClientModule, // Add HttpClientModule
+    WallpaperOptionComponent
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
