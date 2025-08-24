@@ -4,9 +4,10 @@
   <div class="mb-4">
     <label for="pexelsApiKey" class="block text-sm font-medium theme-text-secondary">Pexels API Key:</label>
     <input
-      type="text"
+      type="password"
       id="pexelsApiKey"
       [(ngModel)]="pexelsApiKey"
+      appToggleApiKeyVisibility
       class="mt-1 block w-full px-3 py-2 theme-bg-secondary theme-border-primary rounded-md theme-text-primary focus:outline-none focus:ring-2 theme-border-focus"
       placeholder="Enter your Pexels API Key (optional)"
     >

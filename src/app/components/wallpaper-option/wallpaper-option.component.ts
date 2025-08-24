@@ -2,12 +2,13 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FavoriteWallpaper, Wallpaper } from '../../../types/wallpaper';
+import { ToggleApiKeyVisibilityDirective } from '../../directives/toggle-api-key-visibility.directive';
 import { WallpaperService } from '../../services/wallpaper.service';
 
 @Component({
   selector: 'app-wallpaper-option',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ToggleApiKeyVisibilityDirective],
   templateUrl: './wallpaper-option.component.html',
   styleUrls: ['./wallpaper-option.component.css']
 })

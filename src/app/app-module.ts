@@ -14,6 +14,7 @@ import { WeatherCard } from './components/weather-card/weather-card';
 import { OptionsComponent } from './components/options/options.component'; // Import OptionsComponent
 import { DigitalClockComponent } from './components/digital-clock/digital-clock.component';
 import { WallpaperOptionComponent } from './components/wallpaper-option/wallpaper-option.component';
+import { ToggleApiKeyVisibilityDirective } from './directives/toggle-api-key-visibility.directive';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { WallpaperOptionComponent } from './components/wallpaper-option/wallpape
     FormsModule,
     ReactiveFormsModule, // Add ReactiveFormsModule
     HttpClientModule, // Add HttpClientModule
-    WallpaperOptionComponent
+    WallpaperOptionComponent,
+    ToggleApiKeyVisibilityDirective
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

@@ -13,12 +13,6 @@ export class OptionsComponent implements OnInit {
   @Output() closeOptions = new EventEmitter<void>();
 
   optionsForm!: FormGroup;
-  isHovered: boolean = false;
-  isFocused: boolean = false;
-
-  get showApiKey(): boolean {
-    return this.isHovered || this.isFocused;
-  }
 
   ngOnInit() {
     this.optionsForm = new FormGroup({
@@ -27,13 +21,6 @@ export class OptionsComponent implements OnInit {
     });
   }
 
-  toggleApiKeyVisibility(isVisible: boolean, source: 'hover' | 'focus') {
-    if (source === 'hover') {
-      this.isHovered = isVisible;
-    } else if (source === 'focus') {
-      this.isFocused = isVisible;
-    }
-  }
 
   onSubmit() {
     if (this.optionsForm.valid) {

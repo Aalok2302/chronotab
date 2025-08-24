@@ -24,12 +24,9 @@
       <label for="apiKey" class="block text-sm font-medium text-text-primary mb-2">Tomorrow.io API Key</label>
       <input
         id="apiKey"
-        [type]="showApiKey ? 'text' : 'password'"
         formControlName="apiKey"
-        (mouseenter)="toggleApiKeyVisibility(true, 'hover')"
-        (mouseleave)="toggleApiKeyVisibility(false, 'hover')"
-        (focus)="toggleApiKeyVisibility(true, 'focus')"
-        (blur)="toggleApiKeyVisibility(false, 'focus')"
+        type="password"
+        appToggleApiKeyVisibility
         class="mt-1 block w-full px-3 py-2 border border-border-primary rounded-md shadow-sm focus:outline-none focus:ring-border-focus focus:border-border-focus sm:text-sm"
       />
       <p class="mt-1 text-sm text-text-secondary">
