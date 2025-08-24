@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BookmarkList } from '../bookmark-list/bookmark-list';
 import { WallpaperOptionComponent } from '../wallpaper-option/wallpaper-option.component';
 import { WallpaperService } from '../../services/wallpaper.service';
+import { ThemeService } from '../../services/theme.service';
 import { Wallpaper, FavoriteWallpaper } from '../../../types/wallpaper';
 import { Subscription } from 'rxjs';
 
@@ -23,7 +24,10 @@ export class Layout implements OnInit, AfterViewInit, OnDestroy {
   isCurrentWallpaperFavorite: boolean = false; // New property to track if current wallpaper is a favorite
   private wallpaperSubscription: Subscription = new Subscription();
 
-  constructor(private wallpaperService: WallpaperService) { }
+  constructor(
+    private wallpaperService: WallpaperService,
+    private themeService: ThemeService
+  ) { }
 
   ngOnInit(): void {
     this.loadBackgroundSettings();
@@ -35,6 +39,9 @@ export class Layout implements OnInit, AfterViewInit, OnDestroy {
       this.currentWallpaperUrl = wallpaper ? wallpaper.originalHD : null;
       this.isBackgroundVisible = this.showBackground && !!wallpaper;
       this.checkIfCurrentWallpaperIsFavorite(); // Check favorite status when wallpaper changes
+      if (wallpaper && wallpaper.avgColor) {
+        this.setThemeBasedOnAvgColor(wallpaper.avgColor);
+      }
     });
 
     if (this.showBackground) {
@@ -130,6 +137,29 @@ export class Layout implements OnInit, AfterViewInit, OnDestroy {
       this.isCurrentWallpaperFavorite = this.favoriteWallpapers.some((fav: FavoriteWallpaper) => fav.id === this.currentWallpaper?.id);
     } else {
       this.isCurrentWallpaperFavorite = false;
+    }
+  }
+
+  private setThemeBasedOnAvgColor(avgColor: string): void {
+    // Remove '#' if present
+    const hex = avgColor.startsWith('#') ? avgColor.slice(1) : avgColor;
+
+    // Parse r, g, b values
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    // Calculate luminance (perceived brightness)
+    // Formula: (R*299 + G*587 + B*114) / 1000
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255; // Normalize to 0-1
+
+    // A common threshold for dark/light is 0.5.
+    // If luminance is less than 0.5, it's a dark color, so use light theme.
+    // Otherwise, it's a light color, so use dark theme.
+    if (luminance < 0.5) {
+      this.themeService.setTheme('dark');
+    } else {
+      this.themeService.setTheme('blue');
     }
   }
 }
