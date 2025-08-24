@@ -66,8 +66,8 @@
           <p><span class="font-semibold">Visibility:</span> {{ weatherData.data.values.visibility }} km</p>
         </div>
         <div class="text-right">
-          <p><span class="font-semibold">UV Index:</span> {{ weatherData.data.values.uvIndex }}</p>
-          <p><span class="font-semibold">Pressure:</span> {{ weatherData.data.values.pressureSurfaceLevel }} hPa</p>
+          <p *ngIf="weatherData.data.values.uvIndex"><span class="font-semibold">UV Index:</span> {{ weatherData.data.values.uvIndex }}</p>
+          <p *ngIf="weatherData.data.values.pressureSurfaceLevel"><span class="font-semibold">Pressure:</span> {{ weatherData.data.values.pressureSurfaceLevel }} hPa</p>
         </div>
       </div>
     </div>

@@ -12,6 +12,7 @@ import { Layout } from './components/layout/layout';
 import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
 import { WeatherCard } from './components/weather-card/weather-card';
 import { OptionsComponent } from './components/options/options.component'; // Import OptionsComponent
+import { DigitalClockComponent } from './components/digital-clock/digital-clock.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { OptionsComponent } from './components/options/options.component'; // Im
     Layout,
     ThemeSwitcher,
     WeatherCard,
-    OptionsComponent // Declare OptionsComponent
+    OptionsComponent, // Declare OptionsComponent
+    DigitalClockComponent
   ],
   imports: [
     BrowserModule,
