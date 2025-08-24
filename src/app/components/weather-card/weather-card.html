@@ -1,6 +1,19 @@
 <div class="flex relative mr-8">
   <div class="w-full"> 
     <!-- Configuration Icon -->
+    <div class="relative">
+      <button *ngIf="cachedCities.length" (click)="toggleCityDropdown()" class="absolute right-16 rounded-full bg-background-primary hover:bg-gray-300 focus:outline-none z-10">
+        <svg class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </button>
+      <div *ngIf="showCityDropdown" class="absolute right-16 top-8 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+        <a *ngFor="let cachedCity of cachedCities" (click)="selectCity(cachedCity); toggleCityDropdown()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+          {{ cachedCity | titlecase }}
+        </a>
+      </div>
+    </div>
     <button *ngIf="weatherData" (click)="refreshWeather()" class="absolute right-8 rounded-full bg-background-primary hover:bg-gray-300 focus:outline-none z-10">
       <svg class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>

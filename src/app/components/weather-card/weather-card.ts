@@ -14,6 +14,8 @@ export class WeatherCard implements OnInit {
   city: string = '';
   apiKey: string = '';
   showOptions: boolean = false; // Control visibility of options popover
+  showCityDropdown: boolean = false; // Control visibility of city dropdown
+  cachedCities: string[] = []; // Store cached cities
 
   constructor(public weatherService: WeatherService) { }
 
@@ -28,6 +30,7 @@ export class WeatherCard implements OnInit {
     if (savedApiKey) {
       this.apiKey = savedApiKey;
     }
+    this.cachedCities = this.weatherService.getCachedCities();
 
     // Fetch weather data if both city and API key are available
     if (this.city && this.apiKey) {
@@ -39,6 +42,16 @@ export class WeatherCard implements OnInit {
 
   toggleOptions() {
     this.showOptions = !this.showOptions;
+  }
+
+  toggleCityDropdown() {
+    this.showCityDropdown = !this.showCityDropdown;
+  }
+
+  selectCity(city: string) {
+    this.city = city;
+    localStorage.setItem('weatherCity', this.city);
+    this.getWeather();
   }
 
   onOptionsSubmitted(options: { city: string; apiKey: string }) {
@@ -65,6 +78,8 @@ export class WeatherCard implements OnInit {
       next: (data) => {
         this.weatherData = data;
         this.isLoading = false;
+        this.weatherService.addCachedCity(this.city);
+        this.cachedCities = this.weatherService.getCachedCities();
       },
       error: (err) => {
         console.error('Error fetching weather:', err);

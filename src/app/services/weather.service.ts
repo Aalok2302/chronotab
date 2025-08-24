@@ -44,6 +44,7 @@ export class WeatherService {
   private API_KEY_PLACEHOLDER = 'YOUR_TOMORROW_IO_API_KEY'; // Placeholder for API Key
   private BASE_URL = 'https://api.tomorrow.io/v4/weather/realtime';
   private CACHE_DURATION = 10 * 60 * 1000; // 10 minutes in milliseconds
+  private CACHED_CITIES_KEY = 'cachedWeatherCities';
 
   weatherDescriptions: { [key: number]: string } = {
     "0": "Unknown",
@@ -393,5 +394,18 @@ export class WeatherService {
     }
 
     return `bg-gradient-to-br ${this.gradientMap[codeToUse] || this.gradientMap[0]} text-white`;
+  }
+
+  getCachedCities(): string[] {
+    const cachedCities = localStorage.getItem(this.CACHED_CITIES_KEY);
+    return cachedCities ? JSON.parse(cachedCities) : [];
+  }
+
+  addCachedCity(city: string): void {
+    const cities = this.getCachedCities();
+    if (!cities.includes(city)) {
+      cities.push(city);
+      localStorage.setItem(this.CACHED_CITIES_KEY, JSON.stringify(cities));
+    }
   }
 }
