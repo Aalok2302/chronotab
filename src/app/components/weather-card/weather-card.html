@@ -45,30 +45,33 @@
 
       <p class="text-xl mb-4">{{ weatherService.getWeatherDescription(weatherData.data.values.weatherCode) }}</p>
 
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center">
+      <div class="flex flex-col md:flex-row items-center justify-between mb-6">
+        <div class="flex items-center mb-4 md:mb-0">
           <img [src]="weatherService.getWeatherIconPath(weatherData.data.values.weatherCode)" alt="Weather Icon" class="w-16 h-16 mr-4">
           <div>
             <p class="text-5xl font-extrabold">{{ weatherData.data.values.temperature | number:'1.0-0' }}°C</p>
             <p class="text-lg">Feels like {{ weatherData.data.values.temperatureApparent | number:'1.0-0' }}°C</p>
           </div>
         </div>
-        <div class="text-right">
-          <p class="text-xl font-semibold truncate max-w-[250px] overflow-hidden" [title]="weatherData.location.name">{{ weatherData.location.name }}</p>
-          <p class="text-sm">Humidity: {{ weatherData.data.values.humidity }}%</p>
-          <p class="text-sm">Wind: {{ weatherData.data.values.windSpeed }} m/s</p>
+        <div class="grid grid-cols-2 gap-4 text-base w-full md:w-auto">
+          <div>
+            <p class="font-semibold mb-2">Humidity: {{ weatherData.data.values.humidity }}%</p>
+            <p class="font-semibold mb-2">Wind: {{ weatherData.data.values.windSpeed }} m/s</p>
+            <p class="font-semibold mb-2">Cloud Cover: {{ weatherData.data.values.cloudCover }}%</p>
+          </div>
+          <div class="text-left">
+            <p class="font-semibold mb-2">Visibility: {{ weatherData.data.values.visibility }} km</p>
+            <p *ngIf="weatherData.data.values.uvIndex" class="font-semibold mb-2">UV Index: {{ weatherData.data.values.uvIndex }}</p>
+            <p *ngIf="weatherData.data.values.pressureSurfaceLevel" class="font-semibold mb-2">Pressure: {{ weatherData.data.values.pressureSurfaceLevel }} hPa</p>
+          </div>
         </div>
       </div>
-
-      <div class="grid grid-cols-2 gap-4 text-sm">
-        <div>
-          <p><span class="font-semibold">Cloud Cover:</span> {{ weatherData.data.values.cloudCover }}%</p>
-          <p><span class="font-semibold">Visibility:</span> {{ weatherData.data.values.visibility }} km</p>
-        </div>
-        <div class="text-right">
-          <p *ngIf="weatherData.data.values.uvIndex"><span class="font-semibold">UV Index:</span> {{ weatherData.data.values.uvIndex }}</p>
-          <p *ngIf="weatherData.data.values.pressureSurfaceLevel"><span class="font-semibold">Pressure:</span> {{ weatherData.data.values.pressureSurfaceLevel }} hPa</p>
-        </div>
+      <div class="w-full text-center mt-4 flex items-center justify-center">
+        <svg class="h-8 w-8 text-gray-700 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <p class="text-xl font-semibold truncate overflow-hidden" [title]="weatherData.location.name">{{ weatherData.location.name }}</p>
       </div>
     </div>
   </div>
