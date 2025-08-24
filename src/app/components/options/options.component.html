@@ -1,4 +1,4 @@
-<div class="p-4 theme-bg-elevated theme-shadow-lg rounded-lg border">
+<div class="p-6 theme-bg-elevated theme-shadow-lg rounded-lg border">
   <div class="flex justify-between items-center mb-4">
     <h2 class="text-xl font-semibold">Weather Options</h2>
     <button (click)="onClose()" class="text-text-secondary hover:text-text-primary focus:outline-none">
@@ -7,31 +7,35 @@
       </svg>
     </button>
   </div>
-  <form [formGroup]="optionsForm" (ngSubmit)="onSubmit()" class="space-y-4">
-    <div>
-      <label for="city" class="block text-sm font-medium text-text-primary">City</label>
+  <form [formGroup]="optionsForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <div class="mb-4">
+      <label for="city" class="block text-sm font-medium text-text-primary mb-2">City</label>
       <input
         id="city"
         type="text"
         formControlName="city"
         class="mt-1 block w-full px-3 py-2 border border-border-primary rounded-md shadow-sm focus:outline-none focus:ring-border-focus focus:border-border-focus sm:text-sm"
       />
-      <div *ngIf="optionsForm.get('city')?.invalid && optionsForm.get('city')?.touched" class="text-error text-xs mt-1">
+      <div *ngIf="optionsForm.get('city')?.invalid && optionsForm.get('city')?.touched" class="text-error text-xs mt-2">
         City is required.
       </div>
     </div>
-    <div>
-      <label for="apiKey" class="block text-sm font-medium text-text-primary">Tomorrow.io API Key</label>
+    <div class="mb-4">
+      <label for="apiKey" class="block text-sm font-medium text-text-primary mb-2">Tomorrow.io API Key</label>
       <input
         id="apiKey"
-        type="text"
+        [type]="showApiKey ? 'text' : 'password'"
         formControlName="apiKey"
+        (mouseenter)="toggleApiKeyVisibility(true, 'hover')"
+        (mouseleave)="toggleApiKeyVisibility(false, 'hover')"
+        (focus)="toggleApiKeyVisibility(true, 'focus')"
+        (blur)="toggleApiKeyVisibility(false, 'focus')"
         class="mt-1 block w-full px-3 py-2 border border-border-primary rounded-md shadow-sm focus:outline-none focus:ring-border-focus focus:border-border-focus sm:text-sm"
       />
       <p class="mt-1 text-sm text-text-secondary">
         Get your API key from <a href="https://docs.tomorrow.io/reference/realtime-weather" target="_blank" class="text-accent hover:text-accent-hover">Tomorrow.io documentation</a>.
       </p>
-      <div *ngIf="optionsForm.get('apiKey')?.invalid && optionsForm.get('apiKey')?.touched" class="text-error text-xs mt-1">
+      <div *ngIf="optionsForm.get('apiKey')?.invalid && optionsForm.get('apiKey')?.touched" class="text-error text-xs mt-2">
         API Key is required.
       </div>
     </div>
