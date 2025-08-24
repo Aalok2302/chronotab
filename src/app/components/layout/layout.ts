@@ -1,8 +1,10 @@
-import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookmarkList } from '../bookmark-list/bookmark-list';
 import { WallpaperOptionComponent } from '../wallpaper-option/wallpaper-option.component';
 import { WallpaperService } from '../../services/wallpaper.service';
+import { Wallpaper, FavoriteWallpaper } from '../../../types/wallpaper';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-layout',
@@ -10,21 +12,37 @@ import { WallpaperService } from '../../services/wallpaper.service';
   templateUrl: './layout.html',
   styleUrl: './layout.css'
 })
-export class Layout implements OnInit, AfterViewInit {
+export class Layout implements OnInit, AfterViewInit, OnDestroy {
   searchQuery: string = '';
   showWallpaperOptions: boolean = false;
   currentWallpaperUrl: string | null = null;
-  currentWallpaper: any | null = null; // To store the full wallpaper object
+  currentWallpaper: Wallpaper | null = null; // To store the full wallpaper object
   showBackground: boolean = true;
   isBackgroundVisible: boolean = false; // New property to control background visibility
+  favoriteWallpapers: FavoriteWallpaper[] = [];
+  isCurrentWallpaperFavorite: boolean = false; // New property to track if current wallpaper is a favorite
+  private wallpaperSubscription: Subscription = new Subscription();
 
   constructor(private wallpaperService: WallpaperService) { }
 
   ngOnInit(): void {
     this.loadBackgroundSettings();
+    this.loadFavoriteWallpapers();
     this.isBackgroundVisible = this.showBackground; // Initialize based on stored setting
+
+    this.wallpaperSubscription = this.wallpaperService.currentWallpaper$.subscribe(wallpaper => {
+      this.currentWallpaper = wallpaper;
+      this.currentWallpaperUrl = wallpaper ? wallpaper.originalHD : null;
+      this.isBackgroundVisible = this.showBackground && !!wallpaper;
+      this.checkIfCurrentWallpaperIsFavorite(); // Check favorite status when wallpaper changes
+    });
+
     if (this.showBackground) {
-      this.fetchAndSetWallpaper();
+      // If a wallpaper is already set (e.g., from localStorage), use it.
+      // Otherwise, fetch a new random one.
+      if (!this.currentWallpaper) {
+        this.fetchAndSetWallpaper();
+      }
     } else {
       this.currentWallpaperUrl = null; // Ensure no background image if toggle is off
     }
@@ -34,35 +52,30 @@ export class Layout implements OnInit, AfterViewInit {
 
   ngAfterViewInit() { }
 
-  loadBackgroundSettings(): void {
-    this.showBackground = localStorage.getItem('showBackground') === 'true';
+  ngOnDestroy(): void {
+    this.wallpaperSubscription.unsubscribe();
+  }
+ 
+   loadBackgroundSettings(): void {
+     this.showBackground = localStorage.getItem('showBackground') === 'true';
   }
 
-  async fetchAndSetWallpaper(): Promise<void> {
-    const topics = localStorage.getItem('wallpaperTopics');
-    const apiKey = localStorage.getItem('pexelsApiKey');
-    const wallpaper = await this.wallpaperService.getRandomHDLandscape(topics || undefined, apiKey || undefined);
-    if (wallpaper) {
-      this.currentWallpaper = wallpaper; // Store the entire wallpaper object
-      this.currentWallpaperUrl = wallpaper.originalHD;
-      this.isBackgroundVisible = true;
-    } else {
-      this.currentWallpaper = null; // Clear wallpaper object
-      this.currentWallpaperUrl = null;
-      this.isBackgroundVisible = false;
-    }
-  }
+ async fetchAndSetWallpaper(): Promise<void> {
+   const topics = localStorage.getItem('wallpaperTopics');
+   const apiKey = localStorage.getItem('pexelsApiKey');
+   // The service will emit the wallpaper through the observable
+   await this.wallpaperService.getRandomHDLandscape(topics || undefined, apiKey || undefined);
+ }
 
-  onShowBackgroundChange(show: boolean): void {
-    this.showBackground = show;
-    this.isBackgroundVisible = show; // Update visibility based on toggle
-    if (this.showBackground && this.currentWallpaperUrl === null) {
-      this.fetchAndSetWallpaper();
-    } else {
-      this.currentWallpaper = null; // Clear wallpaper object
-      this.currentWallpaperUrl = null; // Clear background image
-    }
-  }
+ onShowBackgroundChange(show: boolean): void {
+   this.showBackground = show;
+   this.isBackgroundVisible = show; // Update visibility based on toggle
+   if (this.showBackground && !this.currentWallpaper) {
+     this.fetchAndSetWallpaper();
+   } else if (!this.showBackground) {
+     this.wallpaperService.setWallpaper(null as any); // Clear wallpaper via service
+   }
+ }
 
   toggleWallpaperOptions(): void {
     this.showWallpaperOptions = !this.showWallpaperOptions;
@@ -73,6 +86,50 @@ export class Layout implements OnInit, AfterViewInit {
     // Pass the search query to the bookmark list component
     if (this.bookmarkList) {
       this.bookmarkList.onSearchQueryChange(query);
+    }
+  }
+
+  toggleFavoriteWallpaper(): void {
+    if (this.currentWallpaper) {
+      const favWallpaper: FavoriteWallpaper = {
+        id: this.currentWallpaper.id,
+        title: `${this.currentWallpaper.photographer} - ${this.currentWallpaper.alt}`,
+        url: this.currentWallpaper.originalHD,
+        photographer: this.currentWallpaper.photographer,
+        avgColor: this.currentWallpaper.avgColor
+      };
+
+      let existingFavorites = this.getFavoriteWallpapersFromLocalStorage();
+      const isAlreadyFavorite = existingFavorites.some(fav => fav.id === favWallpaper.id);
+
+      if (!isAlreadyFavorite) {
+        existingFavorites.push(favWallpaper);
+        console.log('Wallpaper added to favorites:', favWallpaper);
+      } else {
+        existingFavorites = existingFavorites.filter(fav => fav.id !== favWallpaper.id);
+        console.log('Wallpaper removed from favorites:', favWallpaper);
+      }
+      localStorage.setItem('favoriteWallpapers', JSON.stringify(existingFavorites));
+      this.favoriteWallpapers = existingFavorites; // Update the component's list
+      this.checkIfCurrentWallpaperIsFavorite(); // Update favorite status
+    }
+  }
+
+  loadFavoriteWallpapers(): void {
+    this.favoriteWallpapers = this.getFavoriteWallpapersFromLocalStorage();
+    this.checkIfCurrentWallpaperIsFavorite(); // Update favorite status after loading favorites
+  }
+
+  private getFavoriteWallpapersFromLocalStorage(): FavoriteWallpaper[] {
+    const favorites = localStorage.getItem('favoriteWallpapers');
+    return favorites ? JSON.parse(favorites) : [];
+  }
+
+  private checkIfCurrentWallpaperIsFavorite(): void {
+    if (this.currentWallpaper) {
+      this.isCurrentWallpaperFavorite = this.favoriteWallpapers.some((fav: FavoriteWallpaper) => fav.id === this.currentWallpaper?.id);
+    } else {
+      this.isCurrentWallpaperFavorite = false;
     }
   }
 }

@@ -1,18 +1,6 @@
 import { Injectable } from '@angular/core';
-
-interface Wallpaper {
-  originalHD: string;
-  large2xHD: string;
-  largeHD: string;
-  mediumHD: string;
-  id: number;
-  photographer: string;
-  alt: string;
-  width: number;
-  height: number;
-  avgColor: string;
-  photoURL: string;
-}
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Wallpaper, FavoriteWallpaper } from '../../types/wallpaper';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +9,14 @@ export class WallpaperService {
   private cache = new Map<string, { data: Wallpaper, timestamp: number }>();
   private readonly CACHE_DURATION = 2 * 60 * 1000; // 2 minute in milliseconds
 
-  constructor() { }
+  private _currentWallpaper = new BehaviorSubject<Wallpaper | null>(null);
+  currentWallpaper$: Observable<Wallpaper | null> = this._currentWallpaper.asObservable();
+
+  private readonly WALLPAPER_STORAGE_KEY = 'favoriteWallpaper';
+
+  constructor() {
+    this.loadFavoriteWallpaper();
+  }
 
   private buildRandomHDLandscapeURL(topic: string = 'wallpaper'): string {
     const randomPage = Math.floor(Math.random() * 100) + 1; // Random page 1-100
@@ -107,6 +102,7 @@ export class WallpaperService {
           avgColor: photo.avg_color,
           photoURL: photo.url
         };
+        this._currentWallpaper.next(wallpaper); // Emit the new wallpaper
 
         this.cache.set(cacheKey, { data: wallpaper, timestamp: Date.now() });
         return wallpaper;
@@ -117,6 +113,48 @@ export class WallpaperService {
     } catch (error) {
       console.error('Error fetching random HD image:', error);
       return null;
+    }
+  }
+
+  setWallpaper(wallpaper: Wallpaper): void {
+    this._currentWallpaper.next(wallpaper);
+    this.saveFavoriteWallpaper(wallpaper);
+  }
+
+  private saveFavoriteWallpaper(wallpaper: Wallpaper | null): void {
+    if (wallpaper) {
+      const favoriteWallpaper: FavoriteWallpaper = {
+        id: wallpaper.id,
+        title: wallpaper.alt, // Using alt as title, adjust if a specific title is available
+        url: wallpaper.originalHD, // Using originalHD as the main URL
+        photographer: wallpaper.photographer,
+        avgColor: wallpaper.avgColor
+      };
+      localStorage.setItem(this.WALLPAPER_STORAGE_KEY, JSON.stringify(favoriteWallpaper));
+    } else {
+      localStorage.removeItem(this.WALLPAPER_STORAGE_KEY);
+    }
+  }
+
+  private loadFavoriteWallpaper(): void {
+    const storedWallpaper = localStorage.getItem(this.WALLPAPER_STORAGE_KEY);
+    if (storedWallpaper) {
+      const favoriteWallpaper: FavoriteWallpaper = JSON.parse(storedWallpaper);
+      // Reconstruct a Wallpaper object from FavoriteWallpaper for _currentWallpaper
+      const wallpaper: Wallpaper = {
+        id: favoriteWallpaper.id,
+        alt: favoriteWallpaper.title,
+        photographer: favoriteWallpaper.photographer,
+        avgColor: favoriteWallpaper.avgColor,
+        originalHD: favoriteWallpaper.url,
+        large2xHD: favoriteWallpaper.url, // Using the same URL for all sizes for simplicity
+        largeHD: favoriteWallpaper.url,
+        mediumHD: favoriteWallpaper.url,
+        width: 0, // Default or fetch if needed
+        height: 0, // Default or fetch if needed
+        photoURL: favoriteWallpaper.url
+      };
+      this._currentWallpaper.next(wallpaper);
     }
   }
 }
