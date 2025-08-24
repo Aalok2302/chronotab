@@ -75,4 +75,7 @@ export class WeatherCard implements OnInit {
     });
   }
 
+  refreshWeather() {
+    this.getWeather();
+  }
 }
