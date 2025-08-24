@@ -53,7 +53,7 @@
     <div *ngIf="weatherData" [class]="weatherService.getWeatherGradientClass(weatherData.data.values.weatherCode)" class="p-6 rounded-lg shadow-xl min-w-100">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-3xl font-bold">{{ city | titlecase }}</h2>
-        <span class="text-lg"><span class="text-sm text-secondary">Last updated on -</span> {{ weatherData.data.time | date:'shortTime' }}</span>
+        <span class="text-lg"><span class="text-sm text-secondary">Last updated on -</span> {{ weatherData.data.time | date:'shortTime' }} <span class="text-sm text-secondary">({{ weatherData.data.time | date:'dd MMM' }})</span></span>
       </div>
 
       <p class="text-xl mb-4">{{ weatherService.getWeatherDescription(weatherData.data.values.weatherCode) }}</p>
