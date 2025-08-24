@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 })
 export class DigitalClockComponent implements OnInit, OnDestroy {
   currentTime: string = '';
+  currentDate: Date = new Date();
   currentThemeName: string = '';
   private timer: any;
   private themeSubscription: Subscription = new Subscription();
@@ -44,6 +45,7 @@ export class DigitalClockComponent implements OnInit, OnDestroy {
       second: '2-digit',
       hour12: true
     });
+    this.currentDate = now;
   }
 
   getThemeGradientClasses() {
