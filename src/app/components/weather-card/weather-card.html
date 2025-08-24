@@ -1,7 +1,7 @@
-<div class="flex items-center justify-center p-4 relative">
-  <div class="w-full max-w-md"> 
+<div class="flex relative mr-8">
+  <div class="w-full"> 
     <!-- Configuration Icon -->
-    <button (click)="toggleOptions()" class="absolute top-4 right-4 p-2 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none z-10">
+    <button (click)="toggleOptions()" class="absolute right-0 rounded-full bg-background-primary hover:bg-gray-300 focus:outline-none z-10">
       <svg class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -9,7 +9,7 @@
     </button>
 
     <!-- Options Popover -->
-    <div *ngIf="showOptions" class="absolute top-16 right-4 z-20">
+    <div *ngIf="showOptions" class="absolute top-8 right-2 z-20">
       <app-options
         [initialCity]="city"
         [initialApiKey]="apiKey"
@@ -19,7 +19,7 @@
     </div>
 
     <!-- Default "Configure Weather" text -->
-    <div *ngIf="!weatherData && !showOptions" class="mt-8 p-4 bg-white shadow-md rounded-lg text-center text-gray-600">
+    <div *ngIf="!weatherData && !showOptions" class="p-4 bg-white shadow-md rounded-lg text-center text-gray-600">
       <p class="text-lg font-semibold">Configure Weather</p>
       <p class="text-sm mt-2">Click the settings icon to enter your city and API key.</p>
     </div>
@@ -32,7 +32,7 @@
       {{ error }}
     </div>
 
-    <div *ngIf="weatherData" class="mt-8 bg-gradient-to-br from-blue-400 to-blue-600 text-white p-6 rounded-lg shadow-xl">
+    <div *ngIf="weatherData" class="bg-gradient-to-br from-blue-400 to-blue-600 text-white p-6 rounded-lg shadow-xl min-w-100">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-3xl font-bold">{{ city }}</h2>
         <span class="text-lg">{{ weatherData.data.time | date:'shortTime' }}</span>

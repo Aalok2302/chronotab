@@ -3,7 +3,7 @@ import { WeatherService } from '../../services/weather.service'; // Import Weath
 import { OptionsComponent } from '../options/options.component'; // Import OptionsComponent
 
 @Component({
-  selector: 'app-weather-card',
+  selector: 'weather-card',
   standalone: false,
   templateUrl: './weather-card.html',
 })
