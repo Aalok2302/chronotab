@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BookmarkList } from '../bookmark-list/bookmark-list';
 import { WallpaperOptionComponent } from '../wallpaper-option/wallpaper-option.component';
 import { WallpaperService } from '../../services/wallpaper.service';
-import { ThemeService } from '../../services/theme.service';
+import { ThemeService, Theme } from '../../services/theme.service'; // Import Theme
 import { Wallpaper, FavoriteWallpaper } from '../../../types/wallpaper';
 import { Subscription } from 'rxjs';
 
@@ -22,7 +22,11 @@ export class Layout implements OnInit, AfterViewInit, OnDestroy {
   isBackgroundVisible: boolean = false; // New property to control background visibility
   favoriteWallpapers: FavoriteWallpaper[] = [];
   isCurrentWallpaperFavorite: boolean = false; // New property to track if current wallpaper is a favorite
+  wallpaperDownloadProgress: number = -1; // -1 means hidden, 0-100 for progress
+  currentThemeName: string = ''; // To store the current theme name
   private wallpaperSubscription: Subscription = new Subscription();
+  private progressSubscription: Subscription = new Subscription();
+  private themeSubscription: Subscription = new Subscription(); // New subscription for theme
 
   constructor(
     private wallpaperService: WallpaperService,
@@ -44,6 +48,16 @@ export class Layout implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
+    this.progressSubscription = this.wallpaperService.wallpaperDownloadProgress$.subscribe(progress => {
+      this.wallpaperDownloadProgress = progress;
+      // If progress is 100, hide after a short delay, or immediately if -1
+      if (progress === 100) {
+        setTimeout(() => this.wallpaperDownloadProgress = -1, 500);
+      } else if (progress === -1) {
+        this.wallpaperDownloadProgress = -1;
+      }
+    });
+
     if (this.showBackground) {
       // If a wallpaper is already set (e.g., from localStorage), use it.
       // Otherwise, fetch a new random one.
@@ -53,6 +67,12 @@ export class Layout implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.currentWallpaperUrl = null; // Ensure no background image if toggle is off
     }
+
+    this.themeSubscription = this.themeService.currentTheme$.subscribe(
+      (theme: Theme) => {
+        this.currentThemeName = theme.name;
+      }
+    );
   }
   
   @ViewChild('bookmarkList') bookmarkList!: BookmarkList;
@@ -61,6 +81,8 @@ export class Layout implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.wallpaperSubscription.unsubscribe();
+    this.progressSubscription.unsubscribe();
+    this.themeSubscription.unsubscribe(); // Unsubscribe from theme changes
   }
  
    loadBackgroundSettings(): void {
@@ -168,6 +190,23 @@ export class Layout implements OnInit, AfterViewInit, OnDestroy {
       this.themeService.setTheme('dark');
     } else {
       this.themeService.setTheme('blue');
+    }
+  }
+
+  getProgressBarGradientClasses() {
+    switch (this.currentThemeName) {
+      case 'light':
+        return 'from-gray-200 to-gray-400';
+      case 'dark':
+        return 'from-gray-700 to-gray-900';
+      case 'blue':
+        return 'from-blue-500 to-cyan-600';
+      case 'purple':
+        return 'from-purple-500 to-pink-600';
+      case 'green':
+        return 'from-green-500 to-teal-600';
+      default:
+        return 'from-blue-500 to-purple-600'; // Default gradient
     }
   }
 }

@@ -4,6 +4,12 @@
   [style.background-size]="isBackgroundVisible && currentWallpaperUrl ? 'cover' : 'auto'"
   [style.background-position]="isBackgroundVisible && currentWallpaperUrl ? 'center' : 'initial'"
 >
+    <!-- Progress Bar -->
+    <div *ngIf="wallpaperDownloadProgress !== -1" class="fixed top-0 left-0 h-1 bg-gradient-to-r z-50 transition-all duration-300 ease-out"
+         [ngClass]="getProgressBarGradientClasses()"
+         [style.width.%]="wallpaperDownloadProgress">
+    </div>
+
     <!-- Header with theme switcher -->
     <header class="sticky top-0 z-40 bg-background-elevated border-b border-border-primary backdrop-blur-sm bg-opacity-95">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

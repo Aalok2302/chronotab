@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Wallpaper, FavoriteWallpaper } from '../../types/wallpaper';
 import { NotificationService } from './notification.service';
 
@@ -12,6 +12,9 @@ export class WallpaperService {
 
   private _currentWallpaper = new BehaviorSubject<Wallpaper | null>(null);
   currentWallpaper$: Observable<Wallpaper | null> = this._currentWallpaper.asObservable();
+
+  private _wallpaperDownloadProgress = new Subject<number>();
+  wallpaperDownloadProgress$: Observable<number> = this._wallpaperDownloadProgress.asObservable();
 
   private readonly WALLPAPER_STORAGE_KEY = 'favoriteWallpaper';
 
@@ -66,9 +69,11 @@ export class WallpaperService {
     if (cached && (Date.now() - cached.timestamp < this.CACHE_DURATION)) {
       console.log('Serving wallpaper from cache');
       this._currentWallpaper.next(cached.data);
+      this._wallpaperDownloadProgress.next(-1); // Hide progress bar
       return cached.data;
     }
     this.notificationService.sendNotification('Fetching new wallpaper...');
+    this._wallpaperDownloadProgress.next(0); // Start progress for API call
     try {
       const url = topic ? this.buildRandomHDLandscapeURL(topic) : this.buildRandomTopicURL();
 
@@ -86,7 +91,7 @@ export class WallpaperService {
       }
 
       const data = await response.json();
-
+      // API call successful, now download the image
       if (data.photos && data.photos.length > 0) {
         const randomIndex = Math.floor(Math.random() * data.photos.length);
         const photo = data.photos[randomIndex];
@@ -104,19 +109,59 @@ export class WallpaperService {
           avgColor: photo.avg_color,
           photoURL: photo.url
         };
-        this._currentWallpaper.next(wallpaper); // Emit the new wallpaper
-        this.notificationService.sendNotification('Wallpaper fetched successfully!');
-        this.cache.set(cacheKey, { data: wallpaper, timestamp: Date.now() });
-        return wallpaper;
+
+        // Now download the actual image with progress
+        this.notificationService.sendNotification('Downloading wallpaper image...');
+        const downloadedImageUrl = await this._downloadImageWithProgress(wallpaper.originalHD);
+
+        // Update wallpaper with the object URL for local display
+        const finalWallpaper = { ...wallpaper, originalHD: downloadedImageUrl, large2xHD: downloadedImageUrl, largeHD: downloadedImageUrl, mediumHD: downloadedImageUrl };
+
+        this._currentWallpaper.next(finalWallpaper); // Emit the new wallpaper
+        this.notificationService.sendNotification('Wallpaper downloaded successfully!');
+        this.cache.set(cacheKey, { data: finalWallpaper, timestamp: Date.now() });
+        this._wallpaperDownloadProgress.next(100); // Complete
+        return finalWallpaper;
       } else {
         throw new Error('No photos found');
       }
  
     } catch (error) {
-      console.error('Error fetching random HD image:', error);
-      this.notificationService.sendNotification('Failed to fetch wallpaper.');
+      console.error('Error fetching or downloading wallpaper:', error);
+      this.notificationService.sendNotification('Failed to fetch or download wallpaper.');
+      this._wallpaperDownloadProgress.next(-1); // Hide progress bar on error
       return null;
     }
+  }
+
+  private _downloadImageWithProgress(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.responseType = 'blob'; // Get the response as a Blob
+
+      xhr.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
+          this._wallpaperDownloadProgress.next(progress);
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const imageUrl = URL.createObjectURL(xhr.response);
+          resolve(imageUrl);
+        } else {
+          reject(new Error(`Failed to download image: ${xhr.statusText}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        reject(new Error('Network error during image download.'));
+      };
+
+      xhr.send();
+    });
   }
 
   setWallpaper(wallpaper: Wallpaper): void {
