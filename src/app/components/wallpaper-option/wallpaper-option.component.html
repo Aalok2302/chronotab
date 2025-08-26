@@ -1,61 +1,65 @@
-<div class="p-4 theme-bg-elevated rounded-lg theme-shadow-md theme-text-primary">
+<div class="p-4 theme-bg-elevated rounded-lg theme-shadow-md theme-text-primary max-w-md mx-auto">
   <h2 class="text-xl font-bold mb-4">Wallpaper Options</h2>
-
-  <div class="mb-4">
-    <label for="pexelsApiKey" class="block text-sm font-medium theme-text-secondary">Pexels API Key:</label>
-    <input
-      type="password"
-      id="pexelsApiKey"
-      [(ngModel)]="pexelsApiKey"
-      appToggleApiKeyVisibility
-      class="mt-1 block w-full px-3 py-2 theme-bg-secondary theme-border-primary rounded-md theme-text-primary focus:outline-none focus:ring-2 theme-border-focus"
-      placeholder="Enter your Pexels API Key (optional)"
-    >
-    <p class="mt-1 text-sm theme-text-tertiary">If not provided, a default key will be used.</p>
-  </div>
-
-  <div class="mb-4">
-    <label for="topics" class="block text-sm font-medium theme-text-secondary">Interested Topics (comma-separated):</label>
-    <input
-      type="text"
-      id="topics"
-      [(ngModel)]="topics"
-      class="mt-1 block w-full px-3 py-2 theme-bg-secondary theme-border-primary rounded-md theme-text-primary focus:outline-none focus:ring-2 theme-border-focus"
-      placeholder="e.g., nature, landscape, city"
-    >
-    <p class="mt-1 text-sm theme-text-tertiary">Leave empty to use random topics.</p>
-  </div>
-
-  <div class="flex items-center justify-between mb-4">
-    <label for="showBackground" class="text-sm font-medium theme-text-secondary">Show Background Wallpaper:</label>
-    <label class="relative inline-flex items-center cursor-pointer">
-      <input type="checkbox" id="showBackground" [(ngModel)]="showBackground" (ngModelChange)="saveSettings()" class="sr-only peer">
-      <div class="w-11 h-6 theme-bg-secondary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-theme-border-focus rounded-full peer dark:theme-bg-secondary peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:theme-bg-elevated after:theme-border-primary after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:theme-border-primary peer-checked:theme-bg-primary"></div>
-    </label>
-  </div>
-
-  <div class="mb-4">
-    <label for="favoriteWallpaperSelect" class="block text-sm font-medium theme-text-secondary">Favorite Wallpapers:</label>
-    <select
-      id="favoriteWallpaperSelect"
-      [(ngModel)]="selectedWallpaperUrl"
-      (change)="onSelectFavoriteWallpaper($event)"
-      class="mt-1 block w-full px-3 py-2 theme-bg-secondary theme-border-primary rounded-md theme-text-primary focus:outline-none focus:ring-2 theme-border-focus"
+  <form [formGroup]="wallpaperForm">
+    <div class="mb-4">
+      <label for="pexelsApiKey" class="block text-sm font-medium theme-text-secondary">Pexels API Key:</label>
+      <input type="text" style="display:none;" autocomplete="username">
+      <input
+        type="password"
+        id="pexelsApiKey"
+        formControlName="pexelsApiKey"
+        appToggleApiKeyVisibility
+        autocomplete="current-password"
+        class="mt-1 block w-full px-3 py-2 theme-bg-secondary theme-border-primary rounded-md theme-text-primary focus:outline-none focus:ring-2 theme-border-focus"
+        placeholder="Enter your Pexels API Key (optional)"
       >
-      <option [value]="null">-- Show random wallpaper --</option>
-      <option *ngFor="let fav of favoriteWallpapers" [value]="fav.url">{{ fav.title }}</option>
-    </select>
-  </div>
+      <p class="mt-1 text-sm theme-text-tertiary">If not provided, a default key will be used.</p>
+    </div>
+
+    <div class="mb-4">
+      <label for="topics" class="block text-sm font-medium theme-text-secondary">Interested Topics (comma-separated):</label>
+      <input
+        type="text"
+        id="topics"
+        formControlName="topics"
+        autocomplete="off"
+        class="mt-1 block w-full px-3 py-2 theme-bg-secondary theme-border-primary rounded-md theme-text-primary focus:outline-none focus:ring-2 theme-border-focus"
+        placeholder="e.g., nature, landscape, city"
+      >
+      <p class="mt-1 text-sm theme-text-tertiary">Leave empty to use random topics.</p>
+    </div>
+
+    <div class="flex items-center justify-between mb-4">
+      <label for="showBackground" class="text-sm font-medium theme-text-secondary">Show Background Wallpaper:</label>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" id="showBackground" formControlName="showBackground" class="sr-only peer">
+        <div class="w-11 h-6 theme-bg-secondary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-theme-border-focus rounded-full peer dark:theme-bg-secondary peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:theme-bg-elevated after:theme-border-primary after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:theme-border-primary peer-checked:theme-bg-primary"></div>
+      </label>
+    </div>
+
+    <div class="mb-4">
+      <label for="favoriteWallpaperSelect" class="block text-sm font-medium theme-text-secondary">Favorite Wallpapers:</label>
+      <select
+        id="favoriteWallpaperSelect"
+        formControlName="selectedWallpaperUrl"
+        (change)="onSelectFavoriteWallpaper()"
+        class="mt-1 block w-full px-3 py-2 theme-bg-secondary theme-border-primary rounded-md theme-text-primary focus:outline-none focus:ring-2 theme-border-focus"
+        >
+        <option [value]="'null'">-- Show random wallpaper --</option>
+        <option *ngFor="let fav of favoriteWallpapers" [value]="fav.url">{{ fav.title }}</option>
+      </select>
+    </div>
+
+    <button
+      type="submit"
+      class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium theme-text-primary theme-bg-primary hover:theme-bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 theme-border-focus"
+    >
+      Save Settings
+    </button>
+  </form>
 
   <button
-    (click)="saveSettings()"
-    class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium theme-text-primary theme-bg-primary hover:theme-bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 theme-border-focus"
-  >
-    Save Settings
-  </button>
-
-  <button
-    *ngIf="pexelsApiKey"
+    *ngIf="wallpaperForm.get('pexelsApiKey')?.value"
     (click)="onRefreshWallpaper()"
     class="mt-2 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium theme-text-primary theme-bg-accent hover:theme-bg-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 theme-border-focus"
   >

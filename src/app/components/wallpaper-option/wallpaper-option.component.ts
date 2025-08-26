@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FavoriteWallpaper, Wallpaper } from '../../../types/wallpaper';
 import { ToggleApiKeyVisibilityDirective } from '../../directives/toggle-api-key-visibility.directive';
 import { WallpaperService } from '../../services/wallpaper.service';
@@ -8,14 +8,12 @@ import { WallpaperService } from '../../services/wallpaper.service';
 @Component({
   selector: 'app-wallpaper-option',
   standalone: true,
-  imports: [CommonModule, FormsModule, ToggleApiKeyVisibilityDirective],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ToggleApiKeyVisibilityDirective],
   templateUrl: './wallpaper-option.component.html',
   styleUrls: ['./wallpaper-option.component.css']
 })
 export class WallpaperOptionComponent implements OnInit {
-  pexelsApiKey: string = '';
-  topics: string = '';
-  showBackground: boolean = true;
+  wallpaperForm!: FormGroup;
 
   @Input() favoriteWallpapers: FavoriteWallpaper[] = [];
   @Input() selectedWallpaperUrl: string | null = null; // New input for selected wallpaper URL
@@ -23,35 +21,39 @@ export class WallpaperOptionComponent implements OnInit {
   @Output() refreshWallpaper = new EventEmitter<void>();
   @Output() selectFavoriteWallpaper = new EventEmitter<FavoriteWallpaper>();
 
-  constructor(private wallpaperService: WallpaperService) { }
+  constructor(private wallpaperService: WallpaperService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    this.wallpaperForm = this.fb.group({
+      pexelsApiKey: ['', Validators.required],
+      topics: ['', Validators.required],
+      showBackground: [true],
+      selectedWallpaperUrl: ['null']
+    });
     this.loadSettings();
-    // If selectedWallpaperUrl is null (no favorite wallpaper), set it to "null" string to match the option value
-    if (this.selectedWallpaperUrl === null) {
-      this.selectedWallpaperUrl = 'null';
-    }
+
+    this.wallpaperForm.valueChanges.subscribe(values => {
+      this.saveSettings();
+    });
   }
 
-  onSelectFavoriteWallpaper(event: Event): void {
-    const selectedUrl = (event.target as HTMLSelectElement).value;
-    if (selectedUrl === 'null') { // Check for the string "null"
-      this.wallpaperService.setWallpaper(null as any); // Clear the wallpaper
-      this.selectedWallpaperUrl = null; // Update the input property to reflect the cleared selection
+  onSelectFavoriteWallpaper(): void {
+    const selectedUrl = this.wallpaperForm.get('selectedWallpaperUrl')?.value;
+    if (selectedUrl === 'null') {
+      this.wallpaperService.setWallpaper(null as any);
     } else {
       const selectedFav = this.favoriteWallpapers.find(fav => fav.url === selectedUrl);
       if (selectedFav) {
-        // Create a dummy Wallpaper object to pass to the service
         const dummyWallpaper: Wallpaper = {
           id: selectedFav.id,
           originalHD: selectedFav.url,
-          large2xHD: selectedFav.url, // Using originalHD for all for simplicity
+          large2xHD: selectedFav.url,
           largeHD: selectedFav.url,
           mediumHD: selectedFav.url,
           photographer: selectedFav.photographer,
-          alt: selectedFav.title.split(' - ')[1] || '', // Extract alt from title
-          width: 0, // Not available in FavoriteWallpaper
-          height: 0, // Not available in FavoriteWallpaper
+          alt: selectedFav.title.split(' - ')[1] || '',
+          width: 0,
+          height: 0,
           avgColor: selectedFav.avgColor,
           photoURL: selectedFav.url
         };
@@ -61,36 +63,31 @@ export class WallpaperOptionComponent implements OnInit {
   }
 
   loadSettings(): void {
-    this.pexelsApiKey = localStorage.getItem('pexelsApiKey') || '';
-    this.topics = localStorage.getItem('wallpaperTopics') || '';
-    this.showBackground = localStorage.getItem('showBackground') === 'true';
+    this.wallpaperForm.patchValue({
+      pexelsApiKey: localStorage.getItem('pexelsApiKey') || '',
+      topics: localStorage.getItem('wallpaperTopics') || '',
+      showBackground: localStorage.getItem('showBackground') === 'true',
+      selectedWallpaperUrl: this.selectedWallpaperUrl || 'null'
+    });
   }
 
   saveSettings(): void {
-    localStorage.setItem('pexelsApiKey', this.pexelsApiKey);
-    localStorage.setItem('wallpaperTopics', this.topics);
-    localStorage.setItem('showBackground', this.showBackground.toString());
-    this.showBackgroundChange.emit(this.showBackground);
+    const { pexelsApiKey, topics, showBackground, selectedWallpaperUrl } = this.wallpaperForm.value;
+    localStorage.setItem('pexelsApiKey', pexelsApiKey);
+    localStorage.setItem('wallpaperTopics', topics);
+    localStorage.setItem('showBackground', showBackground.toString());
+    this.showBackgroundChange.emit(showBackground);
+    // Update selectedWallpaperUrl input property if it changes via form
+    if (this.selectedWallpaperUrl !== selectedWallpaperUrl) {
+      this.selectedWallpaperUrl = selectedWallpaperUrl;
+      this.onSelectFavoriteWallpaper(); // Re-apply wallpaper if selection changes
+    }
   }
 
-  onApiKeyChange(event: Event): void {
-    this.pexelsApiKey = (event.target as HTMLInputElement).value;
-    this.saveSettings();
-  }
-
-  onTopicsChange(event: Event): void {
-    this.topics = (event.target as HTMLInputElement).value;
-    this.saveSettings();
-  }
-
-  onToggleBackground(): void {
-    this.showBackground = !this.showBackground;
-    this.saveSettings();
-    this.showBackgroundChange.emit(this.showBackground);
-  }
 
   onRefreshWallpaper(): void {
-    if (this.showBackground) {
+    if (this.wallpaperForm.get('showBackground')?.value) {
+      this.wallpaperForm.get('selectedWallpaperUrl')?.setValue('null'); // Unselect favorite wallpaper
       this.refreshWallpaper.emit();
     }
   }
