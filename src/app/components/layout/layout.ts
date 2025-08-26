@@ -77,11 +77,19 @@ export class Layout implements OnInit, AfterViewInit, OnDestroy {
  onShowBackgroundChange(show: boolean): void {
    this.showBackground = show;
    this.isBackgroundVisible = show; // Update visibility based on toggle
-   if (this.showBackground && !this.currentWallpaper) {
-     this.fetchAndSetWallpaper();
-   } else if (!this.showBackground) {
+   if (this.showBackground) {
+     if (this.currentWallpaper) {
+       this.wallpaperService.setWallpaper(this.currentWallpaper); // Re-emit existing wallpaper
+     } else {
+       this.fetchAndSetWallpaper(); // Fetch a new one if none exists
+     }
+   } else {
      this.wallpaperService.setWallpaper(null as any); // Clear wallpaper via service
    }
+ }
+
+ onRefreshWallpaperInLayout(): void {
+   this.fetchAndSetWallpaper();
  }
 
   toggleWallpaperOptions(): void {

@@ -64,6 +64,7 @@ export class WallpaperService {
     const cached = this.cache.get(cacheKey);
     if (cached && (Date.now() - cached.timestamp < this.CACHE_DURATION)) {
       console.log('Serving wallpaper from cache');
+      this._currentWallpaper.next(cached.data);
       return cached.data;
     }
 
