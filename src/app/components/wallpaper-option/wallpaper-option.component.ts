@@ -7,8 +7,7 @@ import { WallpaperService } from '../../services/wallpaper.service';
 
 @Component({
   selector: 'app-wallpaper-option',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ToggleApiKeyVisibilityDirective],
+  standalone: false,
   templateUrl: './wallpaper-option.component.html',
   styleUrls: ['./wallpaper-option.component.css']
 })

@@ -1,5 +1,6 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // Import FormsModule and ReactiveFormsModule
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
 import { App } from './app';
@@ -26,14 +27,15 @@ import { ToggleApiKeyVisibilityDirective } from './directives/toggle-api-key-vis
     ThemeSwitcher,
     WeatherCard,
     OptionsComponent, // Declare OptionsComponent
-    DigitalClockComponent
+    DigitalClockComponent,
+    WallpaperOptionComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     FormsModule,
-    ReactiveFormsModule, // Add ReactiveFormsModule
-    HttpClientModule, // Add HttpClientModule
-    WallpaperOptionComponent,
+    ReactiveFormsModule,
+    HttpClientModule,
     ToggleApiKeyVisibilityDirective
   ],
   providers: [
