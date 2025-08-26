@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
+import { NotificationService } from './notification.service';
 
 interface WeatherData {
   data: {
@@ -329,7 +330,7 @@ export class WeatherService {
     0: 'from-gray-400 to-gray-600',
   };
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private notificationService: NotificationService) { }
 
   private isDay(): boolean {
     const currentHour = new Date().getHours();
@@ -337,6 +338,7 @@ export class WeatherService {
   }
 
   getWeather(city: string, apiKey: string): Observable<WeatherData> {
+    this.notificationService.sendNotification(`Fetching weather for ${city}...`);
     const cacheKey = `weather_${city}`;
     const cachedData = localStorage.getItem(cacheKey);
 
@@ -358,6 +360,12 @@ export class WeatherService {
     return this.http.get<WeatherData>(this.BASE_URL, { params }).pipe(
       tap(data => {
         localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data }));
+        this.notificationService.sendNotification(`Weather updated for ${city}.`);
+      }),
+      catchError(error => {
+        console.error('Error fetching weather:', error);
+        this.notificationService.sendNotification(`Failed to fetch weather for ${city}.`);
+        return throwError(() => new Error('Failed to fetch weather.'));
       })
     );
   }

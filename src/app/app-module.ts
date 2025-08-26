@@ -15,6 +15,7 @@ import { WeatherCard } from './components/weather-card/weather-card';
 import { OptionsComponent } from './components/options/options.component'; // Import OptionsComponent
 import { DigitalClockComponent } from './components/digital-clock/digital-clock.component';
 import { WallpaperOptionComponent } from './components/wallpaper-option/wallpaper-option.component';
+import { NotificationComponent } from './components/notification/notification.component';
 import { ToggleApiKeyVisibilityDirective } from './directives/toggle-api-key-visibility.directive';
 
 @NgModule({
@@ -28,7 +29,8 @@ import { ToggleApiKeyVisibilityDirective } from './directives/toggle-api-key-vis
     WeatherCard,
     OptionsComponent, // Declare OptionsComponent
     DigitalClockComponent,
-    WallpaperOptionComponent
+    WallpaperOptionComponent,
+    NotificationComponent
   ],
   imports: [
     BrowserModule,

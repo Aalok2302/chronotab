@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Wallpaper, FavoriteWallpaper } from '../../types/wallpaper';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class WallpaperService {
 
   private readonly WALLPAPER_STORAGE_KEY = 'favoriteWallpaper';
 
-  constructor() {
+  constructor(private notificationService: NotificationService) {
     this.loadFavoriteWallpaper();
   }
 
@@ -67,7 +68,7 @@ export class WallpaperService {
       this._currentWallpaper.next(cached.data);
       return cached.data;
     }
-
+    this.notificationService.sendNotification('Fetching new wallpaper...');
     try {
       const url = topic ? this.buildRandomHDLandscapeURL(topic) : this.buildRandomTopicURL();
 
@@ -104,15 +105,16 @@ export class WallpaperService {
           photoURL: photo.url
         };
         this._currentWallpaper.next(wallpaper); // Emit the new wallpaper
-
+        this.notificationService.sendNotification('Wallpaper fetched successfully!');
         this.cache.set(cacheKey, { data: wallpaper, timestamp: Date.now() });
         return wallpaper;
       } else {
         throw new Error('No photos found');
       }
-
+ 
     } catch (error) {
       console.error('Error fetching random HD image:', error);
+      this.notificationService.sendNotification('Failed to fetch wallpaper.');
       return null;
     }
   }
