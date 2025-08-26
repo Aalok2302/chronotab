@@ -86,7 +86,7 @@ export class WallpaperOptionComponent implements OnInit {
 
   onRefreshWallpaper(): void {
     if (this.wallpaperForm.get('showBackground')?.value) {
-      this.wallpaperForm.get('selectedWallpaperUrl')?.setValue('null'); // Unselect favorite wallpaper
+      this.wallpaperForm.get('selectedWallpaperUrl')?.setValue('null', { emitEvent: false }); // Unselect favorite wallpaper without triggering valueChanges
       this.refreshWallpaper.emit();
     }
   }
