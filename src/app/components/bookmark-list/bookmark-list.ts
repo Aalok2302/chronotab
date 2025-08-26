@@ -78,9 +78,10 @@ export class BookmarkList implements OnDestroy {
       .subscribe({
         next: (result) => {
           this.loading = result.loading;
-          this.cdr.detectChanges(); 
+          this.cdr.detectChanges();
           if (result.bookmarks && result.bookmarks.length > 0) {
             this.bookmarkTree = result.bookmarks;
+            this.collapseSecondLayerFolders(); // Collapse second layer folders by default
           }
         },
         error: (error) => {
@@ -89,6 +90,23 @@ export class BookmarkList implements OnDestroy {
           this.loading = false;
         }
       });
+  }
+
+  private collapseSecondLayerFolders() {
+    this.collapsedFolders.clear(); // Clear any existing collapsed state
+    this.bookmarkTree.forEach(bookmark => { // Level 0
+      if (bookmark.children) {
+        bookmark.children.forEach(child => { // Level 1
+          if (child.children) {
+            child.children.forEach(grandchild => { // Level 2
+              if (grandchild.children) { // Only collapse if it's a folder with children (Level 3)
+                this.collapsedFolders.add(grandchild.id);
+              }
+            });
+          }
+        });
+      }
+    });
   }
 
   // Toggle folder collapse/expand state
