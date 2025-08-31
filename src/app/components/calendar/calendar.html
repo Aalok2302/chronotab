@@ -1,4 +1,4 @@
-<div class="rounded-lg shadow bg-gradient-to-r text-text-primary p-4" [ngClass]="themeService.getThemeGradientClasses()" >
+<div class="bg-background-elevated backdrop-blur-sm rounded-lg shadow-theme border border-border-primary text-text-primary p-4">
   <div class="flex justify-between items-center mb-4">
     <button (click)="prevMonth()" class="px-3 py-1 rounded bg-theme-primary text-theme-on-primary hover:bg-theme-primary-hover focus:outline-none">
       <
@@ -18,7 +18,8 @@
          class="p-2 rounded-full cursor-pointer"
          [class.bg-theme-primary]="isSelected(date)"
          [class.text-theme-on-primary]="isSelected(date)"
-         [class.bg-theme-accent]="isHighlighted(date) && !isSelected(date)"
+         [class.bg-theme-accent]="isToday(date)"
+         [ngClass]="{'border': isToday(date), 'border-theme-primary': isToday(date)}"
          [class.text-theme-text]="!isSelected(date)"
          [class.opacity-50]="!date"
          (click)="selectDate(date)">
