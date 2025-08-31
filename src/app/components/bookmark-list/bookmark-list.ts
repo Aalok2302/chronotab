@@ -80,7 +80,7 @@ export class BookmarkList implements OnDestroy {
           this.loading = result.loading;
           this.cdr.detectChanges();
           if (result.bookmarks && result.bookmarks.length > 0) {
-            this.bookmarkTree = result.bookmarks;
+            this.bookmarkTree = this.sortBookmarks(result.bookmarks);
             this.collapseSecondLayerFolders(); // Collapse second layer folders by default
           }
         },
@@ -94,17 +94,16 @@ export class BookmarkList implements OnDestroy {
 
   private collapseSecondLayerFolders() {
     this.collapsedFolders.clear(); // Clear any existing collapsed state
-    this.bookmarkTree.forEach(bookmark => { // Level 0
-      if (bookmark.children) {
-        bookmark.children.forEach(child => { // Level 1
-          if (child.children) {
-            child.children.forEach(grandchild => { // Level 2
-              if (grandchild.children) { // Only collapse if it's a folder with children (Level 3)
-                this.collapsedFolders.add(grandchild.id);
-              }
-            });
-          }
-        });
+    this.collapseFoldersRecursive(this.bookmarkTree, 0);
+  }
+
+  private collapseFoldersRecursive(bookmarks: Bookmark[], currentLevel: number) {
+    bookmarks.forEach(bookmark => {
+      if (bookmark.children) { // It's a folder
+        if (currentLevel >= 2) { // Collapse folders from the second level onwards (0-indexed)
+          this.collapsedFolders.add(bookmark.id);
+        }
+        this.collapseFoldersRecursive(bookmark.children, currentLevel + 1);
       }
     });
   }
@@ -191,5 +190,36 @@ export class BookmarkList implements OnDestroy {
           }
         });
     }
+  }
+  private sortBookmarks(bookmarks: Bookmark[]): Bookmark[] {
+    if (!bookmarks || bookmarks.length === 0) {
+      return [];
+    }
+
+    const folders: Bookmark[] = [];
+    const files: Bookmark[] = [];
+
+    bookmarks.forEach(bookmark => {
+      if (bookmark.url) {
+        files.push(bookmark);
+      } else {
+        folders.push(bookmark);
+      }
+    });
+
+    // Sort folders by dateAdded (ascending)
+    folders.sort((a, b) => (a.dateAdded || 0) - (b.dateAdded || 0));
+
+    // Sort files by dateAdded (ascending)
+    files.sort((a, b) => (a.dateAdded || 0) - (b.dateAdded || 0));
+
+    // Recursively sort children of folders
+    folders.forEach(folder => {
+      if (folder.children) {
+        folder.children = this.sortBookmarks(folder.children);
+      }
+    });
+
+    return [...folders, ...files];
   }
 }
