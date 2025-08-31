@@ -1,0 +1,28 @@
+<div class="rounded-lg shadow bg-gradient-to-r text-text-primary p-4" [ngClass]="themeService.getThemeGradientClasses()" >
+  <div class="flex justify-between items-center mb-4">
+    <button (click)="prevMonth()" class="px-3 py-1 rounded bg-theme-primary text-theme-on-primary hover:bg-theme-primary-hover focus:outline-none">
+      <
+    </button>
+    <h2 class="text-lg font-semibold text-theme-text">{{ displayMonth | date:'MMMM yyyy' }}</h2>
+    <button (click)="nextMonth()" class="px-3 py-1 rounded bg-theme-primary text-theme-on-primary hover:bg-theme-primary-hover focus:outline-none">
+      >
+    </button>
+  </div>
+
+  <div class="grid grid-cols-7 gap-2 text-center text-sm font-medium text-theme-text-secondary mb-2">
+    <div *ngFor="let weekday of weekdays">{{ weekday }}</div>
+  </div>
+
+  <div class="grid grid-cols-7 gap-2 text-center">
+    <div *ngFor="let date of dates"
+         class="p-2 rounded-full cursor-pointer"
+         [class.bg-theme-primary]="isSelected(date)"
+         [class.text-theme-on-primary]="isSelected(date)"
+         [class.bg-theme-accent]="isHighlighted(date) && !isSelected(date)"
+         [class.text-theme-text]="!isSelected(date)"
+         [class.opacity-50]="!date"
+         (click)="selectDate(date)">
+      {{ date?.getDate() }}
+    </div>
+  </div>
+</div>

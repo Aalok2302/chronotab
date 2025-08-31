@@ -17,6 +17,7 @@ import { DigitalClockComponent } from './components/digital-clock/digital-clock.
 import { WallpaperOptionComponent } from './components/wallpaper-option/wallpaper-option.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { ToggleApiKeyVisibilityDirective } from './directives/toggle-api-key-visibility.directive';
+import { Calendar } from './components/calendar/calendar';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { ToggleApiKeyVisibilityDirective } from './directives/toggle-api-key-vis
     OptionsComponent, // Declare OptionsComponent
     DigitalClockComponent,
     WallpaperOptionComponent,
-    NotificationComponent
+    NotificationComponent,
+    Calendar
   ],
   imports: [
     BrowserModule,

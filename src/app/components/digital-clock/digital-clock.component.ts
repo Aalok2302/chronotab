@@ -15,7 +15,7 @@ export class DigitalClockComponent implements OnInit, OnDestroy {
   private timer: any;
   private themeSubscription: Subscription = new Subscription();
 
-  constructor(private themeService: ThemeService) {}
+  constructor(public themeService: ThemeService) {}
 
   ngOnInit() {
     this.updateTime();
@@ -46,22 +46,5 @@ export class DigitalClockComponent implements OnInit, OnDestroy {
       hour12: true
     });
     this.currentDate = now;
-  }
-
-  getThemeGradientClasses() {
-    switch (this.currentThemeName) {
-      case 'light':
-        return 'from-gray-200 to-gray-400';
-      case 'dark':
-        return 'from-gray-700 to-gray-900';
-      case 'blue':
-        return 'from-blue-500 to-cyan-600';
-      case 'purple':
-        return 'from-purple-500 to-pink-600';
-      case 'green':
-        return 'from-green-500 to-teal-600';
-      default:
-        return 'from-blue-500 to-purple-600'; // Default gradient
-    }
   }
 }

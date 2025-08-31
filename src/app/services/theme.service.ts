@@ -317,4 +317,21 @@ export class ThemeService {
     const nextIndex = (currentIndex + 1) % themes.length;
     this.setTheme(themes[nextIndex].name);
   }
+
+  public getThemeGradientClasses() {
+    switch (this.currentThemeSubject.value.name) {
+      case 'light':
+        return 'from-gray-200 to-gray-400';
+      case 'dark':
+        return 'from-gray-700 to-gray-900';
+      case 'blue':
+        return 'from-blue-500 to-cyan-600';
+      case 'purple':
+        return 'from-purple-500 to-pink-600';
+      case 'green':
+        return 'from-green-500 to-teal-600';
+      default:
+        return 'from-blue-500 to-purple-600'; // Default gradient
+    }
+  }
 }
