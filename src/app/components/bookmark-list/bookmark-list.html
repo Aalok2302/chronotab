@@ -18,8 +18,8 @@
     </div>
   </div>
   <!-- Hierarchical Bookmark Tree -->
-  <div *ngIf="!loading && !error" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-    <div class="bg-background-elevated rounded-lg shadow-theme border border-border-primary overflow-hidden">
+  <div *ngIf="!loading && !error" class="bookmark-list-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+    <div class="bg-background-elevated rounded-lg shadow-theme border border-border-primary  max-h-[75vh] overflow-y-auto">
       <ng-container *ngFor="let bookmark of getFilteredBookmarks()">
         <ng-container *ngTemplateOutlet="bookmarkRecursive; context: {bookmark: bookmark, level: 0}"></ng-container>
       </ng-container>
