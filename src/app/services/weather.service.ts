@@ -62,6 +62,7 @@ export class WeatherService {
     const cacheKey = `weather_${city}`;
     const cachedData = this.cache.getCachedItemByKey(cacheKey, this.CACHE_DURATION);
     if (cachedData) {
+      this.notificationService.sendNotification(`Used cached weather for ${city}...`);
       return of(cachedData);
     }
     let params = new HttpParams()
