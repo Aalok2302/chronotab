@@ -22,10 +22,12 @@
       </div>
       <div class="mb-4">
         <label for="apiKey" class="block text-sm font-medium text-text-primary mb-2">Tomorrow.io API Key</label>
+        <input type="text" style="display:none;" autocomplete="username">
         <input
           id="apiKey"
           formControlName="apiKey"
           type="password"
+          autocomplete="current-password"
           appToggleApiKeyVisibility
           class="mt-1 block w-full px-3 py-2 border border-border-primary rounded-md shadow-sm focus:outline-none focus:ring-border-focus focus:border-border-focus sm:text-sm"
         />
