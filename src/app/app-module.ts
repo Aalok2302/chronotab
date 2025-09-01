@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // Import For
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
 import { App } from './app';
 import { BookmarkList } from './components/bookmark-list/bookmark-list';
-import { BookmarkService } from './services/bookmark-service';
+import { BookmarkService } from './services/bookmark.service';
 import { ThemeService } from './services/theme.service';
 import { BookmarkSearchBar } from './components/bookmark-search-bar/bookmark-search-bar';
 import { BookmarkItem } from './components/bookmark-item/bookmark-item';
