@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { WeatherService } from '../../services/weather.service'; // Import WeatherService
-import { OptionsComponent } from '../options/options.component'; // Import OptionsComponent
-import { Options } from '../../services/options.service';
+import { WeatherService } from '../../services/weather.service';
+import { OptionsComponent } from '../options/options.component'; 
+import { Options, OptionsService } from '../../services/options.service';
 
 @Component({
   selector: 'weather-card',
@@ -9,34 +9,25 @@ import { Options } from '../../services/options.service';
   templateUrl: './weather-card.html',
 })
 export class WeatherCard implements OnInit {
-  @ViewChild (OptionsComponent) optionsComponent!: OptionsComponent<Options['weather']>;
+  @ViewChild(OptionsComponent) optionsComponent!: OptionsComponent<Options['weather']>;
 
   weatherData: any = null;
   isLoading: boolean = false;
   error: string | null = null;
   city: string = '';
-  apiKey: string = '';
   showOptions: boolean = false; // Control visibility of options popover
   showCityDropdown: boolean = false; // Control visibility of city dropdown
   cachedCities: string[] = []; // Store cached cities
 
-  constructor(public weatherService: WeatherService) { }
+  constructor(public weatherService: WeatherService) {}
 
   ngOnInit() {
     // Load city and API key from local storage if available
-    const savedCity = localStorage.getItem('weatherCity');
-    const savedApiKey = localStorage.getItem('weatherApiKey');
-
-    if (savedCity) {
-      this.city = savedCity;
-    }
-    if (savedApiKey) {
-      this.apiKey = savedApiKey;
-    }
+    this.city = this.weatherService.getSelectedCity();
     this.cachedCities = this.weatherService.getCachedCities();
 
     // Fetch weather data if both city and API key are available
-    if (this.city && this.apiKey) {
+    if (this.city) {
       this.getWeather();
     } else {
       this.showOptions = true; // Show options if no config found
@@ -53,25 +44,21 @@ export class WeatherCard implements OnInit {
 
   selectCity(city: string) {
     this.city = city;
-    localStorage.setItem('weatherCity', this.city);
+    this.weatherService.setSelectedCity(city);
     this.getWeather();
   }
 
   onOptionsSubmitted(options: Options['weather']) {
-    this.city = options.city;
-    this.apiKey = options.apiKey;
-    
-    localStorage.setItem('weatherCity', this.city);
-    localStorage.setItem('weatherApiKey', this.apiKey);
-
-    this.getWeather()
-    this.showOptions = false; // Close options after submission
+    if (options.city && options.apiKey) {
+      this.selectCity(options.city);
+    }
+    this.showOptions = false;
   }
 
   getWeather() {
-    if (!this.city || !this.apiKey) {
+    if (!this.city) {
       this.error = 'Please provide both city and API key.';
-      this.weatherData = null; // Clear previous weather data
+      this.weatherData = null;
       return;
     }
 
@@ -79,7 +66,7 @@ export class WeatherCard implements OnInit {
     this.error = null;
     this.weatherData = null;
 
-    this.weatherService.getWeather(this.city, this.apiKey).subscribe({
+    this.weatherService.getWeather(this.city).subscribe({
       next: (data) => {
         this.weatherData = data;
         this.isLoading = false;

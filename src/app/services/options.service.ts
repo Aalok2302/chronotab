@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
-import { filter, map } from "rxjs/operators";
+import { filter, map, skip } from "rxjs/operators";
 
 export interface Options {
     event:string,
@@ -28,7 +28,7 @@ export class OptionsService {
         const weather: Options['weather'] = this.getOptions('weatherOptions', {apiKey:'', city:''});
         const wallpaper: Options['wallpaper'] = this.getOptions('wallpaperOptions', {pexelsApiKey: '', topics: '', showBackground: false, selectedWallpaperUrl: ''});
         this.optionsSubject = new BehaviorSubject<Options>({event:'', weather, wallpaper})
-        this.options$ = this.optionsSubject.asObservable();
+        this.options$ = this.optionsSubject.asObservable().pipe(skip(1));
     }
 
     private saveOptions(key: string, object:any){
