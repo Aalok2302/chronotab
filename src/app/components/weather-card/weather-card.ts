@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { WeatherService } from '../../services/weather.service'; // Import WeatherService
 import { OptionsComponent } from '../options/options.component'; // Import OptionsComponent
+import { Options } from '../../services/options.service';
 
 @Component({
   selector: 'weather-card',
@@ -8,6 +9,8 @@ import { OptionsComponent } from '../options/options.component'; // Import Optio
   templateUrl: './weather-card.html',
 })
 export class WeatherCard implements OnInit {
+  @ViewChild (OptionsComponent) optionsComponent!: OptionsComponent<Options['weather']>;
+
   weatherData: any = null;
   isLoading: boolean = false;
   error: string | null = null;
@@ -54,12 +57,14 @@ export class WeatherCard implements OnInit {
     this.getWeather();
   }
 
-  onOptionsSubmitted(options: { city: string; apiKey: string }) {
+  onOptionsSubmitted(options: Options['weather']) {
     this.city = options.city;
     this.apiKey = options.apiKey;
+    
     localStorage.setItem('weatherCity', this.city);
     localStorage.setItem('weatherApiKey', this.apiKey);
-    this.getWeather();
+
+    this.getWeather()
     this.showOptions = false; // Close options after submission
   }
 

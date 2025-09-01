@@ -18,6 +18,7 @@ import { WallpaperOptionComponent } from './components/wallpaper-option/wallpape
 import { NotificationComponent } from './components/notification/notification.component';
 import { ToggleApiKeyVisibilityDirective } from './directives/toggle-api-key-visibility.directive';
 import { Calendar } from './components/calendar/calendar';
+import { WeatherOptionsComponent } from './components/options/weather-options/weather-options.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { Calendar } from './components/calendar/calendar';
     DigitalClockComponent,
     WallpaperOptionComponent,
     NotificationComponent,
-    Calendar
+    Calendar,
+    WeatherOptionsComponent
   ],
   imports: [
     BrowserModule,

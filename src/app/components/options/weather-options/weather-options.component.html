@@ -1,0 +1,47 @@
+<div class="p-6 theme-bg-elevated theme-shadow-lg rounded-lg border">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold">Weather Options</h2>
+      <button (click)="onClose()" class="text-text-secondary hover:text-text-primary focus:outline-none">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <form [formGroup]="optionsForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div class="mb-4">
+        <label for="city" class="block text-sm font-medium text-text-primary mb-2">City</label>
+        <input
+          id="city"
+          type="text"
+          formControlName="city"
+          class="mt-1 block w-full px-3 py-2 border border-border-primary rounded-md shadow-sm focus:outline-none focus:ring-border-focus focus:border-border-focus sm:text-sm"
+        />
+        <div *ngIf="optionsForm.get('city')?.invalid && optionsForm.get('city')?.touched" class="text-error text-xs mt-2">
+          City is required.
+        </div>
+      </div>
+      <div class="mb-4">
+        <label for="apiKey" class="block text-sm font-medium text-text-primary mb-2">Tomorrow.io API Key</label>
+        <input
+          id="apiKey"
+          formControlName="apiKey"
+          type="password"
+          appToggleApiKeyVisibility
+          class="mt-1 block w-full px-3 py-2 border border-border-primary rounded-md shadow-sm focus:outline-none focus:ring-border-focus focus:border-border-focus sm:text-sm"
+        />
+        <p class="mt-1 text-sm text-text-secondary">
+          Get your API key from <a href="https://docs.tomorrow.io/reference/realtime-weather" target="_blank" class="text-accent hover:text-accent-hover">Tomorrow.io documentation</a>.
+        </p>
+        <div *ngIf="optionsForm.get('apiKey')?.invalid && optionsForm.get('apiKey')?.touched" class="text-error text-xs mt-2">
+          API Key is required.
+        </div>
+      </div>
+      <button
+        type="submit"
+        [disabled]="optionsForm.invalid"
+        class="w-full flex justify-center py-2 px-4 border rounded-md shadow-sm text-sm font-medium text-text-inverse bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
+      >
+        Get Weather
+      </button>
+    </form>
+  </div>

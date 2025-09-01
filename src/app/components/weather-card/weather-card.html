@@ -29,10 +29,9 @@
     <!-- Options Popover -->
     <div *ngIf="showOptions" class="absolute top-8 right-2 z-20">
       <app-options
-        [initialCity]="city"
-        [initialApiKey]="apiKey"
         (optionsSubmitted)="onOptionsSubmitted($event)"
         (closeOptions)="toggleOptions()"
+        [calledFor]="'WEATHER'"
       ></app-options>
     </div>
 
