@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Bookmark } from '../../services/bookmark.service';
+import { Bookmark } from '../../../services/bookmark.service';
 
 @Component({
   selector: 'bookmark-item',

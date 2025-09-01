@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Bookmark, BookmarkService } from '../../services/bookmark.service';
+import { Bookmark, BookmarkService } from '../../../services/bookmark.service';
 
 @Component({
   selector: 'bookmark-list',

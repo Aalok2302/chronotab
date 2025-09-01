@@ -1,6 +1,6 @@
 import { Component, ViewChild, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BookmarkList } from '../bookmark-list/bookmark-list';
+import { BookmarkList } from '../bookmark/bookmark-list/bookmark-list';
 import { WallpaperOptionComponent } from '../wallpaper-option/wallpaper-option.component';
 import { WallpaperService } from '../../services/wallpaper.service';
 import { ThemeService, Theme } from '../../services/theme.service'; // Import Theme
