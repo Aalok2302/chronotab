@@ -14,11 +14,11 @@ import { ThemeSwitcher } from './components/theme-switcher/theme-switcher';
 import { WeatherCard } from './components/weather-card/weather-card';
 import { OptionsComponent } from './components/options/options.component'; // Import OptionsComponent
 import { DigitalClockComponent } from './components/digital-clock/digital-clock.component';
-import { WallpaperOptionComponent } from './components/wallpaper-option/wallpaper-option.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { ToggleApiKeyVisibilityDirective } from './directives/toggle-api-key-visibility.directive';
 import { Calendar } from './components/calendar/calendar';
 import { WeatherOptionsComponent } from './components/options/weather-options/weather-options.component';
+import { WallpaperOptionsComponent } from './components/options/wallpaper-options/wallpaper-options.component';
 
 @NgModule({
   declarations: [
@@ -31,10 +31,10 @@ import { WeatherOptionsComponent } from './components/options/weather-options/we
     WeatherCard,
     OptionsComponent, // Declare OptionsComponent
     DigitalClockComponent,
-    WallpaperOptionComponent,
     NotificationComponent,
     Calendar,
-    WeatherOptionsComponent
+    WeatherOptionsComponent,
+    WallpaperOptionsComponent
   ],
   imports: [
     BrowserModule,

@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { Wallpaper, FavoriteWallpaper } from '../../types/wallpaper';
+import { Wallpaper } from '../../types/wallpaper';
 import { NotificationService } from './notification.service';
+import { OptionsService } from './options.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WallpaperService {
+  private PEXELS_API_KEY = 'PEXELS_API_KEY_PLACEHOLDER';
+
   private cache = new Map<string, { data: Wallpaper, timestamp: number }>();
   private readonly CACHE_DURATION = 2 * 60 * 1000; // 2 minute in milliseconds
 
@@ -18,7 +21,9 @@ export class WallpaperService {
 
   private readonly WALLPAPER_STORAGE_KEY = 'favoriteWallpaper';
 
-  constructor(private notificationService: NotificationService) {
+  public favWallpapers: Wallpaper[] = [];
+
+  constructor(private notificationService: NotificationService, private options:OptionsService) {
     this.loadFavoriteWallpaper();
   }
 
@@ -60,22 +65,26 @@ export class WallpaperService {
     return `https://api.pexels.com/v1/search?${params.toString()}`;
   }
 
-  async getRandomHDLandscape(topic?: string, apiKey?: string): Promise<Wallpaper | null> {
-    const PEXELS_API_KEY = apiKey || localStorage.getItem('pexelsApiKey') || 'YOUR_DEFAULT_API_KEY_HERE'; // Use provided key, then stored, then default
-    const cacheKey = `wallpaper-${topic || 'random'}`;
+  private setCurrentWallpaper(wallpaper:Wallpaper){
+    this._currentWallpaper.next(wallpaper);
+  }
+
+  async getRandomHDLandscape(): Promise<Wallpaper | null> {
+    const PEXELS_API_KEY = this.options.getWallpaperOptions().pexelsApiKey || localStorage.getItem('pexelsApiKey') || this.PEXELS_API_KEY;
+    const cacheKey = `wallpaper-${this.options.getWallpaperOptions().topics || 'random'}`;
 
     // Check cache first
     const cached = this.cache.get(cacheKey);
     if (cached && (Date.now() - cached.timestamp < this.CACHE_DURATION)) {
       console.log('Serving wallpaper from cache');
-      this._currentWallpaper.next(cached.data);
+      this.setCurrentWallpaper(cached.data);
       this._wallpaperDownloadProgress.next(-1); // Hide progress bar
       return cached.data;
     }
     this.notificationService.sendNotification('Fetching new wallpaper...');
     this._wallpaperDownloadProgress.next(0); // Start progress for API call
     try {
-      const url = topic ? this.buildRandomHDLandscapeURL(topic) : this.buildRandomTopicURL();
+      const url = this.options.getWallpaperOptions().topics ? this.buildRandomHDLandscapeURL(this.options.getWallpaperOptions().topics) : this.buildRandomTopicURL();
 
       console.log('Fetching new wallpaper from API URL:', url);
 
@@ -107,18 +116,20 @@ export class WallpaperService {
           width: photo.width,
           height: photo.height,
           avgColor: photo.avg_color,
-          photoURL: photo.url
+          photoURL: photo.url,
+          title: photo.photographer + ' - ' + photo.alt
         };
 
         // Now download the actual image with progress
         this.notificationService.sendNotification('Downloading wallpaper image...');
-        const downloadedImageUrl = await this._downloadImageWithProgress(wallpaper.originalHD);
+        const downloadedImageUrl = wallpaper.originalHD;
 
         // Update wallpaper with the object URL for local display
-        const finalWallpaper = { ...wallpaper, originalHD: downloadedImageUrl, large2xHD: downloadedImageUrl, largeHD: downloadedImageUrl, mediumHD: downloadedImageUrl };
+        const finalWallpaper = { ...wallpaper, originalHD: downloadedImageUrl, large2xHD: downloadedImageUrl, largeHD: downloadedImageUrl, mediumHD: downloadedImageUrl, photoURL: downloadedImageUrl};
 
-        this._currentWallpaper.next(finalWallpaper); // Emit the new wallpaper
+        this.setCurrentWallpaper(finalWallpaper); // Emit the new wallpaper
         this.notificationService.sendNotification('Wallpaper downloaded successfully!');
+
         this.cache.set(cacheKey, { data: finalWallpaper, timestamp: Date.now() });
         this._wallpaperDownloadProgress.next(100); // Complete
         return finalWallpaper;
@@ -165,44 +176,60 @@ export class WallpaperService {
   }
 
   setWallpaper(wallpaper: Wallpaper): void {
-    this._currentWallpaper.next(wallpaper);
-    this.saveFavoriteWallpaper(wallpaper);
+    this.setCurrentWallpaper(wallpaper);
   }
 
-  private saveFavoriteWallpaper(wallpaper: Wallpaper | null): void {
+  public saveFavoriteWallpaper(wallpaper: Wallpaper): void {
     if (wallpaper) {
-      const favoriteWallpaper: FavoriteWallpaper = {
-        id: wallpaper.id,
-        title: wallpaper.alt, // Using alt as title, adjust if a specific title is available
-        url: wallpaper.originalHD, // Using originalHD as the main URL
-        photographer: wallpaper.photographer,
-        avgColor: wallpaper.avgColor
-      };
+      const favoriteWallpaper = wallpaper;
       localStorage.setItem(this.WALLPAPER_STORAGE_KEY, JSON.stringify(favoriteWallpaper));
     } else {
       localStorage.removeItem(this.WALLPAPER_STORAGE_KEY);
     }
+    this.setCurrentWallpaper(wallpaper);
   }
 
   private loadFavoriteWallpaper(): void {
     const storedWallpaper = localStorage.getItem(this.WALLPAPER_STORAGE_KEY);
+    this.favWallpapers = this.getFavoriteWallpapersFromLocalStorage();
     if (storedWallpaper) {
-      const favoriteWallpaper: FavoriteWallpaper = JSON.parse(storedWallpaper);
-      // Reconstruct a Wallpaper object from FavoriteWallpaper for _currentWallpaper
-      const wallpaper: Wallpaper = {
-        id: favoriteWallpaper.id,
-        alt: favoriteWallpaper.title,
-        photographer: favoriteWallpaper.photographer,
-        avgColor: favoriteWallpaper.avgColor,
-        originalHD: favoriteWallpaper.url,
-        large2xHD: favoriteWallpaper.url, // Using the same URL for all sizes for simplicity
-        largeHD: favoriteWallpaper.url,
-        mediumHD: favoriteWallpaper.url,
-        width: 0, // Default or fetch if needed
-        height: 0, // Default or fetch if needed
-        photoURL: favoriteWallpaper.url
-      };
-      this._currentWallpaper.next(wallpaper);
+      const favoriteWallpaper: Wallpaper = JSON.parse(storedWallpaper);
+      if(this.favWallpapers.some((fav:Wallpaper)=>{fav.id === favoriteWallpaper?.id})){
+        // Reconstruct a Wallpaper object from FavoriteWallpaper for _currentWallpaper
+        this.setCurrentWallpaper(favoriteWallpaper);
+      }
     }
+  }
+
+  public toggleFavoriteWallpaper(currentWallpaper:Wallpaper): void {
+    if (currentWallpaper) {
+      const favWallpaper: Wallpaper = currentWallpaper;
+
+      let existingFavorites = this.getFavoriteWallpapersFromLocalStorage();
+      const isAlreadyFavorite = existingFavorites.some(fav => fav.id === favWallpaper.id);
+
+      if (!isAlreadyFavorite) {
+        existingFavorites.push(favWallpaper);
+        console.log('Wallpaper added to favorites:', favWallpaper);
+      } else {
+        existingFavorites = existingFavorites.filter(fav => fav.id !== favWallpaper.id);
+        console.log('Wallpaper removed from favorites:', favWallpaper);
+      }
+      localStorage.setItem('favoriteWallpapers', JSON.stringify(existingFavorites));
+      this.favWallpapers = existingFavorites;
+    }
+  }
+
+  private getFavoriteWallpapersFromLocalStorage(): Wallpaper[] {
+    const favorites = localStorage.getItem('favoriteWallpapers');
+    return favorites ? JSON.parse(favorites) : [];
+  }
+
+  public checkIfCurrentWallpaperIsFavorite(currentWallpaper:Wallpaper): boolean {
+    if (currentWallpaper) {
+      const fav = this.favWallpapers.some((fav: Wallpaper) => fav.id === currentWallpaper?.id);
+      return fav;
+    } 
+    return false;
   }
 }

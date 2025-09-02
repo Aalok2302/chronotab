@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { filter, map, skip } from "rxjs/operators";
+import { Wallpaper } from "../../types/wallpaper";
 
 export interface Options {
     event:string,
@@ -12,7 +13,8 @@ export interface Options {
         pexelsApiKey: string,
         topics: string,
         showBackground: boolean,
-        selectedWallpaperUrl: string
+        favWallpaperId: number,
+        currentWallpaper?:Wallpaper
     }
 }
 
@@ -26,7 +28,7 @@ export class OptionsService {
 
     constructor(){
         const weather: Options['weather'] = this.getOptions('weatherOptions', {apiKey:'', city:''});
-        const wallpaper: Options['wallpaper'] = this.getOptions('wallpaperOptions', {pexelsApiKey: '', topics: '', showBackground: false, selectedWallpaperUrl: ''});
+        const wallpaper: Options['wallpaper'] = this.getOptions('wallpaperOptions', {pexelsApiKey: '', topics: '', showBackground: false, favWallpaperId: -1});
         this.optionsSubject = new BehaviorSubject<Options>({event:'', weather, wallpaper})
         this.options$ = this.optionsSubject.asObservable().pipe(skip(1));
     }
@@ -61,7 +63,7 @@ export class OptionsService {
     }
 
     public getWallpaperOptions(){
-        return this.optionsSubject.value.weather;
+        return this.optionsSubject.value.wallpaper;
     }
 
     public setWallpaperOptions(wallpaper:Options['wallpaper']){

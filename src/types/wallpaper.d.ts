@@ -10,12 +10,5 @@ export interface Wallpaper {
   height: number;
   avgColor: string;
   photoURL: string;
-}
-
-export interface FavoriteWallpaper {
-  id: number;
   title: string;
-  url: string;
-  photographer: string;
-  avgColor: string;
 }
