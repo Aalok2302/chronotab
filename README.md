@@ -4,6 +4,7 @@ Chronotab is a bookmark management extension that helps you organize and access 
 
 ## Features
 
+#Aalok Added new feature
 - **Bookmark Management**: Add, edit, and delete bookmarks and folders.
 - **Search**: Quickly find bookmarks with a powerful search feature.
 - **Organization**: Organize bookmarks into folders and subfolders for easy access.
